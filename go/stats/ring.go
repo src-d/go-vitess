@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package stats
 
 // Ring of int64 values
+// Not thread safe
 type RingInt64 struct {
 	position int
 	values   []int64
