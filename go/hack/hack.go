@@ -71,3 +71,13 @@ func (self *StringArena) NewString(b []byte) string {
 func (self *StringArena) SpaceLeft() int {
 	return cap(self.buf) - len(self.buf)
 }
+
+// String force casts a []byte to a string.
+// USE AT YOUR OWN RISK
+func String(b []byte) (s string) {
+	pbytes := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+	pstring := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	pstring.Data = pbytes.Data
+	pstring.Len = pbytes.Len
+	return
+}
