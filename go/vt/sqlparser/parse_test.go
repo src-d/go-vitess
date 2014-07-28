@@ -8,10 +8,8 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/youtube/vitess/go/testfiles"
-	"github.com/youtube/vitess/go/vt/key"
 	"io"
 	"os"
-	"sort"
 	"strings"
 	"testing"
 )
@@ -37,47 +35,6 @@ func TestParse(t *testing.T) {
 		}
 		if out != tcase.output {
 			t.Error(fmt.Sprintf("File:%s Line:%v\n%q\n%q", tcase.file, tcase.lineno, tcase.output, out))
-		}
-	}
-}
-
-func TestRouting(t *testing.T) {
-	tabletkeys := []key.KeyspaceId{
-		"\x00\x00\x00\x00\x00\x00\x00\x02",
-		"\x00\x00\x00\x00\x00\x00\x00\x04",
-		"\x00\x00\x00\x00\x00\x00\x00\x06",
-		"a",
-		"b",
-		"d",
-	}
-	bindVariables := make(map[string]interface{})
-	bindVariables["id0"] = 0
-	bindVariables["id2"] = 2
-	bindVariables["id3"] = 3
-	bindVariables["id4"] = 4
-	bindVariables["id6"] = 6
-	bindVariables["id8"] = 8
-	bindVariables["ids"] = []interface{}{1, 4}
-	bindVariables["a"] = "a"
-	bindVariables["b"] = "b"
-	bindVariables["c"] = "c"
-	bindVariables["d"] = "d"
-	bindVariables["e"] = "e"
-	for tcase := range iterateFiles("sqlparser_test/routing_cases.txt") {
-		if tcase.output == "" {
-			tcase.output = tcase.input
-		}
-		out, err := GetShardList(tcase.input, bindVariables, tabletkeys)
-		if err != nil {
-			if err.Error() != tcase.output {
-				t.Error(fmt.Sprintf("Line:%v\n%s\n%s", tcase.lineno, tcase.input, err))
-			}
-			continue
-		}
-		sort.Ints(out)
-		outstr := fmt.Sprintf("%v", out)
-		if outstr != tcase.output {
-			t.Error(fmt.Sprintf("Line:%v\n%s\n%s", tcase.lineno, tcase.output, outstr))
 		}
 	}
 }
