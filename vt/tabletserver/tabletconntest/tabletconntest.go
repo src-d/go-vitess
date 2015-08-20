@@ -988,11 +988,11 @@ var testStreamHealthStreamHealthResponse = &pb.StreamHealthResponse{
 	},
 	TabletExternallyReparentedTimestamp: 1234589,
 	RealtimeStats: &pb.RealtimeStats{
-		HealthError:         "random error",
-		SecondsBehindMaster: 234,
-		BinlogPlayersCount: 1,
+		HealthError:                            "random error",
+		SecondsBehindMaster:                    234,
+		BinlogPlayersCount:                     1,
 		SecondsBehindMasterFilteredReplication: 2,
-		CpuUsage:            1.0,
+		CpuUsage: 1.0,
 	},
 }
 var testStreamHealthError = "to trigger a server error"
