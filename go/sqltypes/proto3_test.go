@@ -2,25 +2,25 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package proto
+package sqltypes
 
 import (
 	"reflect"
 	"testing"
 
-	"github.com/youtube/vitess/go/sqltypes"
 	"github.com/youtube/vitess/go/vt/proto/query"
 )
 
+// TODO(sougou): need more tests here.
 func TestRowsToProto3(t *testing.T) {
-	rows := [][]sqltypes.Value{{
-		sqltypes.MakeString([]byte("aa")),
-		sqltypes.NULL,
-		sqltypes.MakeString([]byte("12")),
+	rows := [][]Value{{
+		MakeString([]byte("aa")),
+		NULL,
+		MakeString([]byte("12")),
 	}, {
-		sqltypes.MakeString([]byte("bb")),
-		sqltypes.NULL,
-		sqltypes.NULL,
+		MakeString([]byte("bb")),
+		NULL,
+		NULL,
 	}}
 	p3 := RowsToProto3(rows)
 	want := []*query.Row{
