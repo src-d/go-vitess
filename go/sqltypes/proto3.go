@@ -2,19 +2,15 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package proto
+package sqltypes
 
-import (
-	"github.com/youtube/vitess/go/sqltypes"
-
-	pbq "github.com/youtube/vitess/go/vt/proto/query"
-)
+import pbq "github.com/youtube/vitess/go/vt/proto/query"
 
 // This file contains the proto3 conversion functions for the structures
 // defined here.
 
-// RowsToProto3 converts an internal [][]sqltypes.Value to the proto3 version
-func RowsToProto3(rows [][]sqltypes.Value) []*pbq.Row {
+// RowsToProto3 converts [][]Value to proto3.
+func RowsToProto3(rows [][]Value) []*pbq.Row {
 	if len(rows) == 0 {
 		return nil
 	}
@@ -45,22 +41,22 @@ func RowsToProto3(rows [][]sqltypes.Value) []*pbq.Row {
 	return result
 }
 
-// Proto3ToRows converts a proto3 []Row to an internal data structure.
-func Proto3ToRows(rows []*pbq.Row) [][]sqltypes.Value {
+// Proto3ToRows converts a proto3 rows to [][]Value.
+func Proto3ToRows(rows []*pbq.Row) [][]Value {
 	if len(rows) == 0 {
-		return [][]sqltypes.Value{}
+		return [][]Value{}
 	}
 
-	result := make([][]sqltypes.Value, len(rows))
+	result := make([][]Value, len(rows))
 	for i, r := range rows {
 		index := 0
-		result[i] = make([]sqltypes.Value, len(r.Lengths))
+		result[i] = make([]Value, len(r.Lengths))
 		for j, l := range r.Lengths {
 			if l < 0 {
-				result[i][j] = sqltypes.NULL
+				result[i][j] = NULL
 			} else {
 				end := index + int(l)
-				result[i][j] = sqltypes.MakeString(r.Values[index:end])
+				result[i][j] = MakeString(r.Values[index:end])
 				index = end
 			}
 		}
@@ -68,41 +64,40 @@ func Proto3ToRows(rows []*pbq.Row) [][]sqltypes.Value {
 	return result
 }
 
-// QueryResultToProto3 converts an internal QueryResult to the proto3 version
-func QueryResultToProto3(qr *QueryResult) *pbq.QueryResult {
+// ResultToProto3 converts Result to proto3.
+func ResultToProto3(qr *Result) *pbq.QueryResult {
 	if qr == nil {
 		return nil
 	}
 	return &pbq.QueryResult{
 		Fields:       qr.Fields,
 		RowsAffected: qr.RowsAffected,
-		InsertId:     qr.InsertId,
+		InsertId:     qr.InsertID,
 		Rows:         RowsToProto3(qr.Rows),
 	}
 }
 
-// Proto3ToQueryResult converts a proto3 QueryResult to an internal data structure.
-func Proto3ToQueryResult(qr *pbq.QueryResult) *QueryResult {
+// Proto3ToResult converts a proto3 Result to an internal data structure.
+func Proto3ToResult(qr *pbq.QueryResult) *Result {
 	if qr == nil {
 		return nil
 	}
-	return &QueryResult{
+	return &Result{
 		Fields:       qr.Fields,
 		RowsAffected: qr.RowsAffected,
-		InsertId:     qr.InsertId,
+		InsertID:     qr.InsertId,
 		Rows:         Proto3ToRows(qr.Rows),
 	}
 }
 
-// Proto3ToQueryResults converts an array os proto3 QueryResult to an
-// internal data structure.
-func Proto3ToQueryResults(qr []*pbq.QueryResult) []QueryResult {
+// Proto3ToResults converts proto3 results to []Result.
+func Proto3ToResults(qr []*pbq.QueryResult) []Result {
 	if len(qr) == 0 {
 		return nil
 	}
-	result := make([]QueryResult, len(qr))
+	result := make([]Result, len(qr))
 	for i, q := range qr {
-		result[i] = *Proto3ToQueryResult(q)
+		result[i] = *Proto3ToResult(q)
 	}
 	return result
 }
