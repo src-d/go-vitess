@@ -189,7 +189,7 @@ func (*Set) iStatement()        {}
 func (*DDL) iStatement()        {}
 func (*Show) iStatement()       {}
 func (*Use) iStatement()        {}
-func (*OtherRead) iStatement()  {}
+func (*Describe) iStatement()   {}
 func (*OtherAdmin) iStatement() {}
 
 // ParenSelect can actually not be a top level statement,
@@ -1141,19 +1141,31 @@ func (node *Use) WalkSubtree(visit Visit) error {
 	return Walk(visit, node.DBName)
 }
 
-// OtherRead represents a DESCRIBE, or EXPLAIN statement.
-// It should be used only as an indicator. It does not contain
-// the full AST for the statement.
-type OtherRead struct{}
+// Describe represents a DESCRIBE or EXPLAIN statement. Right now,
+// only the `{DESCRIBE|EXPLAIN} TABLE_ID [COL_NAME]` is supported.
+type Describe struct {
+	Command string
+	Table   TableIdent
+	Column  *ColName
+}
 
 // Format formats the node.
-func (node *OtherRead) Format(buf *TrackedBuffer) {
-	buf.WriteString("otherread")
+func (node *Describe) Format(buf *TrackedBuffer) {
+	if node.Column == nil || node.Column.Name.IsEmpty() {
+		buf.Myprintf("%s %v", strings.ToLower(node.Command), node.Table)
+	} else {
+		buf.Myprintf(
+			"%s %v %v",
+			strings.ToLower(node.Command),
+			node.Table,
+			node.Column,
+		)
+	}
 }
 
 // WalkSubtree walks the nodes of the subtree.
-func (node *OtherRead) WalkSubtree(visit Visit) error {
-	return nil
+func (node *Describe) WalkSubtree(visit Visit) error {
+	return Walk(visit, node.Table)
 }
 
 // OtherAdmin represents a misc statement that relies on ADMIN privileges,

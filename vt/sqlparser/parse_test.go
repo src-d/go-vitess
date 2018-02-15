@@ -986,13 +986,22 @@ var (
 		output: "use `ks:-80@master`",
 	}, {
 		input:  "describe foobar",
-		output: "otherread",
+		output: "describe foobar",
 	}, {
 		input:  "desc foobar",
-		output: "otherread",
+		output: "desc foobar",
 	}, {
 		input:  "explain foobar",
-		output: "otherread",
+		output: "explain foobar",
+	}, {
+		input:  "explain foobar baz",
+		output: "explain foobar baz",
+	}, {
+		input:  "describe foobar baz",
+		output: "describe foobar baz",
+	}, {
+		input:  "desc foobar baz",
+		output: "desc foobar baz",
 	}, {
 		input:  "truncate table foo",
 		output: "truncate table foo",
