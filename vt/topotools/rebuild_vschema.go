@@ -22,10 +22,10 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/vt/logutil"
-	"vitess.io/vitess/go/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/logutil"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
 
-	vschemapb "vitess.io/vitess/go/vt/proto/vschema"
+	vschemapb "gopkg.in/src-d/go-vitess.v1/vt/proto/vschema"
 )
 
 // RebuildVSchema rebuilds the SrvVSchema for the provided cell list

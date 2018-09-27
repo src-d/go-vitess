@@ -20,7 +20,7 @@ import (
 	"bytes"
 	"testing"
 
-	"vitess.io/vitess/go/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
 )
 
 func TestEncodable(t *testing.T) {

@@ -25,7 +25,7 @@ import (
 	"strings"
 	"testing"
 
-	"vitess.io/vitess/go/testfiles"
+	"gopkg.in/src-d/go-vitess.v1/testfiles"
 )
 
 var testOutputTempDir string

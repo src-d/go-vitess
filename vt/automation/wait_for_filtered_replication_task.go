@@ -18,8 +18,8 @@ package automation
 
 import (
 	"golang.org/x/net/context"
-	automationpb "vitess.io/vitess/go/vt/proto/automation"
-	"vitess.io/vitess/go/vt/topo/topoproto"
+	automationpb "gopkg.in/src-d/go-vitess.v1/vt/proto/automation"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
 )
 
 // WaitForFilteredReplicationTask runs vtctl WaitForFilteredReplication to block until the destination master

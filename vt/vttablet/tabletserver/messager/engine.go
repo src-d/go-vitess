@@ -23,18 +23,18 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/sync2"
-	"vitess.io/vitess/go/vt/dbconfigs"
-	"vitess.io/vitess/go/vt/log"
-	"vitess.io/vitess/go/vt/sqlparser"
-	"vitess.io/vitess/go/vt/vterrors"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/connpool"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/schema"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/tabletenv"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/sync2"
+	"gopkg.in/src-d/go-vitess.v1/vt/dbconfigs"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
+	"gopkg.in/src-d/go-vitess.v1/vt/vterrors"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/connpool"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/schema"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/tabletenv"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
-	vtrpcpb "vitess.io/vitess/go/vt/proto/vtrpc"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	vtrpcpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtrpc"
 )
 
 // TabletService defines the functions of TabletServer

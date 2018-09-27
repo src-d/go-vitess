@@ -23,7 +23,7 @@ import (
 	"text/template"
 	"time"
 
-	"vitess.io/vitess/go/vt/topo/topoproto"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
 )
 
 type rateChange string

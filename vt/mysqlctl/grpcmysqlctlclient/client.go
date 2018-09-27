@@ -28,10 +28,10 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/vt/grpcclient"
-	"vitess.io/vitess/go/vt/mysqlctl/mysqlctlclient"
+	"gopkg.in/src-d/go-vitess.v1/vt/grpcclient"
+	"gopkg.in/src-d/go-vitess.v1/vt/mysqlctl/mysqlctlclient"
 
-	mysqlctlpb "vitess.io/vitess/go/vt/proto/mysqlctl"
+	mysqlctlpb "gopkg.in/src-d/go-vitess.v1/vt/proto/mysqlctl"
 )
 
 type client struct {

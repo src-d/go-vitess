@@ -22,16 +22,16 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/mysql"
-	"vitess.io/vitess/go/stats"
-	"vitess.io/vitess/go/sync2"
-	"vitess.io/vitess/go/tb"
-	"vitess.io/vitess/go/vt/log"
-	"vitess.io/vitess/go/vt/topo"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/schema"
+	"gopkg.in/src-d/go-vitess.v1/mysql"
+	"gopkg.in/src-d/go-vitess.v1/stats"
+	"gopkg.in/src-d/go-vitess.v1/sync2"
+	"gopkg.in/src-d/go-vitess.v1/tb"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/schema"
 
-	binlogdatapb "vitess.io/vitess/go/vt/proto/binlogdata"
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	binlogdatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/binlogdata"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 /* API and config for UpdateStream Service */

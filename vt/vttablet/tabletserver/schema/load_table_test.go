@@ -25,13 +25,13 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/mysql"
-	"vitess.io/vitess/go/mysql/fakesqldb"
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/vt/sqlparser"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/connpool"
+	"gopkg.in/src-d/go-vitess.v1/mysql"
+	"gopkg.in/src-d/go-vitess.v1/mysql/fakesqldb"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/connpool"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
 )
 
 var errRejected = errors.New("rejected")

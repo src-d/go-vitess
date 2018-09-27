@@ -23,13 +23,13 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/stats"
-	"vitess.io/vitess/go/tb"
-	"vitess.io/vitess/go/vt/callerid"
-	"vitess.io/vitess/go/vt/log"
-	"vitess.io/vitess/go/vt/sqlparser"
+	"gopkg.in/src-d/go-vitess.v1/stats"
+	"gopkg.in/src-d/go-vitess.v1/tb"
+	"gopkg.in/src-d/go-vitess.v1/vt/callerid"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
 
-	vtrpcpb "vitess.io/vitess/go/vt/proto/vtrpc"
+	vtrpcpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtrpc"
 )
 
 var (

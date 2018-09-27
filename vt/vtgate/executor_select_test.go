@@ -23,14 +23,14 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/vt/discovery"
-	_ "vitess.io/vitess/go/vt/vtgate/vindexes"
-	"vitess.io/vitess/go/vt/vttablet/sandboxconn"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/vt/discovery"
+	_ "gopkg.in/src-d/go-vitess.v1/vt/vtgate/vindexes"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/sandboxconn"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
-	vtgatepb "vitess.io/vitess/go/vt/proto/vtgate"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
+	vtgatepb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtgate"
 )
 
 func TestSelectNext(t *testing.T) {

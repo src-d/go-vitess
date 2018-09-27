@@ -21,9 +21,9 @@ import (
 	"reflect"
 	"testing"
 
-	"vitess.io/vitess/go/vt/key"
+	"gopkg.in/src-d/go-vitess.v1/vt/key"
 
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 func TestParseDestination(t *testing.T) {

@@ -27,8 +27,8 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/vt/log"
-	workflowpb "vitess.io/vitess/go/vt/proto/workflow"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	workflowpb "gopkg.in/src-d/go-vitess.v1/vt/proto/workflow"
 )
 
 // This file contains the necessary object definitions and interfaces

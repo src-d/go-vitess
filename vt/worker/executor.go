@@ -21,14 +21,14 @@ import (
 	"time"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/vt/discovery"
-	"vitess.io/vitess/go/vt/throttler"
-	"vitess.io/vitess/go/vt/topo/topoproto"
-	"vitess.io/vitess/go/vt/wrangler"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/vt/discovery"
+	"gopkg.in/src-d/go-vitess.v1/vt/throttler"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
+	"gopkg.in/src-d/go-vitess.v1/vt/wrangler"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 // executor takes care of the write-side of the copy.

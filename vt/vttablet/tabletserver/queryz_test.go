@@ -26,10 +26,10 @@ import (
 	"testing"
 	"time"
 
-	"vitess.io/vitess/go/vt/dbconfigs"
-	"vitess.io/vitess/go/vt/sqlparser"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/planbuilder"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/schema"
+	"gopkg.in/src-d/go-vitess.v1/vt/dbconfigs"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/planbuilder"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/schema"
 )
 
 func TestQueryzHandler(t *testing.T) {

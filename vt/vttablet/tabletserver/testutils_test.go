@@ -23,9 +23,9 @@ import (
 	"reflect"
 	"testing"
 
-	"vitess.io/vitess/go/mysql/fakesqldb"
-	"vitess.io/vitess/go/vt/dbconfigs"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/tabletenv"
+	"gopkg.in/src-d/go-vitess.v1/mysql/fakesqldb"
+	"gopkg.in/src-d/go-vitess.v1/vt/dbconfigs"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/tabletenv"
 )
 
 var errRejected = errors.New("rejected")

@@ -22,12 +22,12 @@ import (
 	"time"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/mysql"
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/vt/binlog/binlogplayer"
-	"vitess.io/vitess/go/vt/mysqlctl/fakemysqldaemon"
+	"gopkg.in/src-d/go-vitess.v1/mysql"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/vt/binlog/binlogplayer"
+	"gopkg.in/src-d/go-vitess.v1/vt/mysqlctl/fakemysqldaemon"
 
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 func TestEngineOpen(t *testing.T) {

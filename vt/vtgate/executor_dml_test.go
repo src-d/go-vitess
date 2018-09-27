@@ -23,13 +23,13 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/sqltypes"
-	_ "vitess.io/vitess/go/vt/vtgate/vindexes"
-	"vitess.io/vitess/go/vt/vttablet/sandboxconn"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	_ "gopkg.in/src-d/go-vitess.v1/vt/vtgate/vindexes"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/sandboxconn"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
-	vtgatepb "vitess.io/vitess/go/vt/proto/vtgate"
-	vtrpcpb "vitess.io/vitess/go/vt/proto/vtrpc"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	vtgatepb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtgate"
+	vtrpcpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtrpc"
 )
 
 func TestUpdateEqual(t *testing.T) {

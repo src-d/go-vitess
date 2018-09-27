@@ -21,7 +21,7 @@ import (
 	"strings"
 	"sync"
 
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 // ErrorRecorder offers a way to record errors during complex

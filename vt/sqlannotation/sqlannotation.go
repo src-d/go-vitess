@@ -31,8 +31,8 @@ import (
 
 	"bytes"
 
-	"vitess.io/vitess/go/stats"
-	"vitess.io/vitess/go/vt/sqlparser"
+	"gopkg.in/src-d/go-vitess.v1/stats"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
 )
 
 const (

@@ -20,7 +20,7 @@ import (
 	"sort"
 	"strings"
 
-	vtrpcpb "vitess.io/vitess/go/vt/proto/vtrpc"
+	vtrpcpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtrpc"
 )
 
 // A list of all vtrpcpb.Code, ordered by priority. These priorities are

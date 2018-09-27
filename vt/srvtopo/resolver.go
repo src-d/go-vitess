@@ -21,14 +21,14 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/vt/key"
-	"vitess.io/vitess/go/vt/topo/topoproto"
-	"vitess.io/vitess/go/vt/vterrors"
-	"vitess.io/vitess/go/vt/vttablet/queryservice"
+	"gopkg.in/src-d/go-vitess.v1/vt/key"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
+	"gopkg.in/src-d/go-vitess.v1/vt/vterrors"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/queryservice"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
-	vtrpcpb "vitess.io/vitess/go/vt/proto/vtrpc"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
+	vtrpcpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtrpc"
 )
 
 // A Resolver can resolve keyspace ids and key ranges into ResolvedShard*

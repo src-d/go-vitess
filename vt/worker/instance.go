@@ -27,14 +27,14 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/tb"
-	"vitess.io/vitess/go/vt/log"
-	"vitess.io/vitess/go/vt/logutil"
-	vtrpcpb "vitess.io/vitess/go/vt/proto/vtrpc"
-	"vitess.io/vitess/go/vt/topo"
-	"vitess.io/vitess/go/vt/vterrors"
-	"vitess.io/vitess/go/vt/vttablet/tmclient"
-	"vitess.io/vitess/go/vt/wrangler"
+	"gopkg.in/src-d/go-vitess.v1/tb"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/logutil"
+	vtrpcpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtrpc"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/vterrors"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tmclient"
+	"gopkg.in/src-d/go-vitess.v1/vt/wrangler"
 )
 
 // Instance encapsulate the execution state of vtworker.

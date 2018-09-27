@@ -26,17 +26,17 @@ import (
 	"time"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/event"
-	"vitess.io/vitess/go/mysql"
-	"vitess.io/vitess/go/sqlescape"
-	"vitess.io/vitess/go/vt/concurrency"
-	"vitess.io/vitess/go/vt/topo"
-	"vitess.io/vitess/go/vt/topo/topoproto"
-	"vitess.io/vitess/go/vt/topotools"
-	"vitess.io/vitess/go/vt/topotools/events"
+	"gopkg.in/src-d/go-vitess.v1/event"
+	"gopkg.in/src-d/go-vitess.v1/mysql"
+	"gopkg.in/src-d/go-vitess.v1/sqlescape"
+	"gopkg.in/src-d/go-vitess.v1/vt/concurrency"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
+	"gopkg.in/src-d/go-vitess.v1/vt/topotools"
+	"gopkg.in/src-d/go-vitess.v1/vt/topotools/events"
 
-	replicationdatapb "vitess.io/vitess/go/vt/proto/replicationdata"
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	replicationdatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/replicationdata"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 const (

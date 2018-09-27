@@ -24,17 +24,17 @@ import (
 	"time"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/event"
-	"vitess.io/vitess/go/vt/binlog/binlogplayer"
-	"vitess.io/vitess/go/vt/concurrency"
-	"vitess.io/vitess/go/vt/discovery"
-	"vitess.io/vitess/go/vt/topo"
-	"vitess.io/vitess/go/vt/topo/topoproto"
-	"vitess.io/vitess/go/vt/topotools"
-	"vitess.io/vitess/go/vt/topotools/events"
+	"gopkg.in/src-d/go-vitess.v1/event"
+	"gopkg.in/src-d/go-vitess.v1/vt/binlog/binlogplayer"
+	"gopkg.in/src-d/go-vitess.v1/vt/concurrency"
+	"gopkg.in/src-d/go-vitess.v1/vt/discovery"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
+	"gopkg.in/src-d/go-vitess.v1/vt/topotools"
+	"gopkg.in/src-d/go-vitess.v1/vt/topotools/events"
 
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
-	vschemapb "vitess.io/vitess/go/vt/proto/vschema"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
+	vschemapb "gopkg.in/src-d/go-vitess.v1/vt/proto/vschema"
 )
 
 const (

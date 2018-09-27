@@ -21,7 +21,7 @@ import (
 	"sync"
 	"time"
 
-	"vitess.io/vitess/go/cache"
+	"gopkg.in/src-d/go-vitess.v1/cache"
 )
 
 // Numbered allows you to manage resources by tracking them with numbers.

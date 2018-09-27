@@ -22,21 +22,21 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/hack"
-	"vitess.io/vitess/go/mysql"
-	"vitess.io/vitess/go/sqlescape"
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/stats"
-	"vitess.io/vitess/go/vt/dbconfigs"
-	"vitess.io/vitess/go/vt/dbconnpool"
-	"vitess.io/vitess/go/vt/log"
-	"vitess.io/vitess/go/vt/sqlparser"
-	"vitess.io/vitess/go/vt/vterrors"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/connpool"
+	"gopkg.in/src-d/go-vitess.v1/hack"
+	"gopkg.in/src-d/go-vitess.v1/mysql"
+	"gopkg.in/src-d/go-vitess.v1/sqlescape"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/stats"
+	"gopkg.in/src-d/go-vitess.v1/vt/dbconfigs"
+	"gopkg.in/src-d/go-vitess.v1/vt/dbconnpool"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
+	"gopkg.in/src-d/go-vitess.v1/vt/vterrors"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/connpool"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
-	vtrpcpb "vitess.io/vitess/go/vt/proto/vtrpc"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
+	vtrpcpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtrpc"
 )
 
 const (

@@ -25,14 +25,14 @@ import (
 	"testing"
 	"time"
 
-	"vitess.io/vitess/go/mysql"
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/vt/dbconfigs"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/tabletenv"
-	"vitess.io/vitess/go/vt/vttest"
+	"gopkg.in/src-d/go-vitess.v1/mysql"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/vt/dbconfigs"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/tabletenv"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttest"
 
-	vttestpb "vitess.io/vitess/go/vt/proto/vttest"
+	vttestpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vttest"
 )
 
 var (

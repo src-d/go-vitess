@@ -29,20 +29,20 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/golang/protobuf/proto"
-	"vitess.io/vitess/go/sqlescape"
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/vt/grpcclient"
-	"vitess.io/vitess/go/vt/key"
-	"vitess.io/vitess/go/vt/logutil"
-	"vitess.io/vitess/go/vt/topo"
-	"vitess.io/vitess/go/vt/topo/topoproto"
-	"vitess.io/vitess/go/vt/vtgate/vindexes"
-	"vitess.io/vitess/go/vt/vttablet/queryservice"
-	"vitess.io/vitess/go/vt/vttablet/tabletconn"
+	"gopkg.in/src-d/go-vitess.v1/sqlescape"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/vt/grpcclient"
+	"gopkg.in/src-d/go-vitess.v1/vt/key"
+	"gopkg.in/src-d/go-vitess.v1/vt/logutil"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtgate/vindexes"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/queryservice"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletconn"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
-	tabletmanagerdatapb "vitess.io/vitess/go/vt/proto/tabletmanagerdata"
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	tabletmanagerdatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/tabletmanagerdata"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 // QueryResultReader will stream rows towards the output channel.

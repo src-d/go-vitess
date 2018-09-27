@@ -22,14 +22,14 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/stats"
-	"vitess.io/vitess/go/vt/key"
-	"vitess.io/vitess/go/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/stats"
+	"gopkg.in/src-d/go-vitess.v1/vt/key"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
-	tabletmanagerdatapb "vitess.io/vitess/go/vt/proto/tabletmanagerdata"
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	tabletmanagerdatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/tabletmanagerdata"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 // DiffType specifies why a specific row was found as different when comparing

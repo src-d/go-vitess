@@ -23,12 +23,12 @@ import (
 	"strings"
 	"testing"
 
-	"vitess.io/vitess/go/vt/logutil"
-	"vitess.io/vitess/go/vt/topo/memorytopo"
-	"vitess.io/vitess/go/vt/vttablet/tmclient"
-	"vitess.io/vitess/go/vt/wrangler"
+	"gopkg.in/src-d/go-vitess.v1/vt/logutil"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/memorytopo"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tmclient"
+	"gopkg.in/src-d/go-vitess.v1/vt/wrangler"
 
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 func expvarHandler(gitRev *string) func(http.ResponseWriter, *http.Request) {

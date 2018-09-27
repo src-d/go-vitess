@@ -23,8 +23,8 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/acl"
-	"vitess.io/vitess/go/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/acl"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
 )
 
 // RegisterDebugHealthHandler register a debug health http endpoint for a vtcld server

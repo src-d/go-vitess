@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"log/syslog"
 
-	"vitess.io/vitess/go/event/syslogger"
-	"vitess.io/vitess/go/vt/topo/topoproto"
+	"gopkg.in/src-d/go-vitess.v1/event/syslogger"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
 )
 
 // Syslog writes the event to syslog.

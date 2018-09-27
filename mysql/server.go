@@ -24,11 +24,11 @@ import (
 	"net"
 	"time"
 
-	"vitess.io/vitess/go/netutil"
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/stats"
-	"vitess.io/vitess/go/tb"
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/netutil"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/stats"
+	"gopkg.in/src-d/go-vitess.v1/tb"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 const (

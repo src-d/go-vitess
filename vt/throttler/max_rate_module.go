@@ -16,7 +16,7 @@ limitations under the License.
 
 package throttler
 
-import "vitess.io/vitess/go/sync2"
+import "gopkg.in/src-d/go-vitess.v1/sync2"
 
 // MaxRateModule allows to set and retrieve a maximum rate limit.
 // It implements the Module interface.
