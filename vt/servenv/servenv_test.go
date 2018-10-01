@@ -20,7 +20,7 @@ import (
 	"testing"
 	"time"
 
-	"vitess.io/vitess/go/event"
+	"gopkg.in/src-d/go-vitess.v1/event"
 )
 
 func TestFireOnTermSyncHooksFinished(t *testing.T) {

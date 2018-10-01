@@ -23,7 +23,7 @@ import (
 	"net/http"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/vt/wrangler"
+	"gopkg.in/src-d/go-vitess.v1/vt/wrangler"
 )
 
 const pingHTML = `

@@ -21,7 +21,7 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	binlogdatapb "vitess.io/vitess/go/vt/proto/binlogdata"
+	binlogdatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/binlogdata"
 )
 
 // binlogEvent wraps a raw packet buffer and provides methods to examine it

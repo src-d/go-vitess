@@ -20,7 +20,7 @@ import (
 	"container/heap"
 	"sync"
 
-	"vitess.io/vitess/go/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
 )
 
 //_______________________________________________

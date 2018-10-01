@@ -23,9 +23,9 @@ package srvtopo
 import (
 	"golang.org/x/net/context"
 
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
-	vschemapb "vitess.io/vitess/go/vt/proto/vschema"
-	"vitess.io/vitess/go/vt/topo"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
+	vschemapb "gopkg.in/src-d/go-vitess.v1/vt/proto/vschema"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
 )
 
 // Server is a subset of the topo.Server API that only contains

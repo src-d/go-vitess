@@ -25,16 +25,16 @@ import (
 
 	"google.golang.org/grpc"
 
-	"vitess.io/vitess/go/vt/logutil"
-	"vitess.io/vitess/go/vt/servenv"
-	"vitess.io/vitess/go/vt/topo"
-	"vitess.io/vitess/go/vt/vtctl"
-	"vitess.io/vitess/go/vt/vttablet/tmclient"
-	"vitess.io/vitess/go/vt/wrangler"
+	"gopkg.in/src-d/go-vitess.v1/vt/logutil"
+	"gopkg.in/src-d/go-vitess.v1/vt/servenv"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtctl"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tmclient"
+	"gopkg.in/src-d/go-vitess.v1/vt/wrangler"
 
-	logutilpb "vitess.io/vitess/go/vt/proto/logutil"
-	vtctldatapb "vitess.io/vitess/go/vt/proto/vtctldata"
-	vtctlservicepb "vitess.io/vitess/go/vt/proto/vtctlservice"
+	logutilpb "gopkg.in/src-d/go-vitess.v1/vt/proto/logutil"
+	vtctldatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtctldata"
+	vtctlservicepb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtctlservice"
 )
 
 // VtctlServer is our RPC server

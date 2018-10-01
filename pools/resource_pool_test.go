@@ -22,7 +22,7 @@ import (
 	"time"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/sync2"
+	"gopkg.in/src-d/go-vitess.v1/sync2"
 )
 
 var lastID, count sync2.AtomicInt64

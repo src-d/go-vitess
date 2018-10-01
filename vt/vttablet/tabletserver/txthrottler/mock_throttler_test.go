@@ -9,8 +9,8 @@ import (
 	time "time"
 
 	gomock "github.com/golang/mock/gomock"
-	discovery "vitess.io/vitess/go/vt/discovery"
-	throttlerdata "vitess.io/vitess/go/vt/proto/throttlerdata"
+	discovery "gopkg.in/src-d/go-vitess.v1/vt/discovery"
+	throttlerdata "gopkg.in/src-d/go-vitess.v1/vt/proto/throttlerdata"
 )
 
 // MockThrottlerInterface is a mock of ThrottlerInterface interface

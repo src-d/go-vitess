@@ -9,10 +9,10 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	context "golang.org/x/net/context"
-	sqltypes "vitess.io/vitess/go/sqltypes"
-	query "vitess.io/vitess/go/vt/proto/query"
-	topodata "vitess.io/vitess/go/vt/proto/topodata"
-	vtgate "vitess.io/vitess/go/vt/proto/vtgate"
+	sqltypes "gopkg.in/src-d/go-vitess.v1/sqltypes"
+	query "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	topodata "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
+	vtgate "gopkg.in/src-d/go-vitess.v1/vt/proto/vtgate"
 )
 
 // MockVTGateService is a mock of VTGateService interface

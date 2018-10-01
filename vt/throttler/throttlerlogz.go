@@ -24,7 +24,7 @@ import (
 	"strings"
 	"time"
 
-	"vitess.io/vitess/go/vt/logz"
+	"gopkg.in/src-d/go-vitess.v1/vt/logz"
 )
 
 const logHeaderHTML = `

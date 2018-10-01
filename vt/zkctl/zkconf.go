@@ -29,9 +29,9 @@ import (
 	"strings"
 	"text/template"
 
-	"vitess.io/vitess/go/netutil"
-	"vitess.io/vitess/go/vt/env"
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/netutil"
+	"gopkg.in/src-d/go-vitess.v1/vt/env"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 type zkServerAddr struct {

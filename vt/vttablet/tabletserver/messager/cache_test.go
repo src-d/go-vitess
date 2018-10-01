@@ -20,7 +20,7 @@ import (
 	"reflect"
 	"testing"
 
-	"vitess.io/vitess/go/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
 )
 
 func TestMessagerCacheOrder(t *testing.T) {

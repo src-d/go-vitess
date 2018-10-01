@@ -10,7 +10,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	context "golang.org/x/net/context"
-	topodata "vitess.io/vitess/go/vt/proto/topodata"
+	topodata "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 // MockReshardingWrangler is a mock of ReshardingWrangler interface

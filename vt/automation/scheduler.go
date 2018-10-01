@@ -27,8 +27,8 @@ import (
 	"sync"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/vt/log"
-	automationpb "vitess.io/vitess/go/vt/proto/automation"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	automationpb "gopkg.in/src-d/go-vitess.v1/vt/proto/automation"
 )
 
 type schedulerState int32

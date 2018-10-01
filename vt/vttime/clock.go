@@ -19,7 +19,7 @@ package vttime
 import (
 	"flag"
 
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 var (

@@ -8,9 +8,9 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	discovery "vitess.io/vitess/go/vt/discovery"
-	topodata "vitess.io/vitess/go/vt/proto/topodata"
-	queryservice "vitess.io/vitess/go/vt/vttablet/queryservice"
+	discovery "gopkg.in/src-d/go-vitess.v1/vt/discovery"
+	topodata "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
+	queryservice "gopkg.in/src-d/go-vitess.v1/vt/vttablet/queryservice"
 )
 
 // MockHealthCheck is a mock of HealthCheck interface

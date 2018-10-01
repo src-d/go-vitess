@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"strings"
 
-	"vitess.io/vitess/go/tb"
+	"gopkg.in/src-d/go-vitess.v1/tb"
 )
 
 // HandlePanic should be called using 'defer' in the RPC code that executes the command.

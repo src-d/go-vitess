@@ -24,7 +24,7 @@ import (
 
 	"github.com/hashicorp/consul/api"
 
-	"vitess.io/vitess/go/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
 )
 
 // Factory is the consul topo.Factory implementation.

@@ -19,8 +19,8 @@ package planbuilder
 import (
 	"fmt"
 
-	"vitess.io/vitess/go/vt/sqlparser"
-	"vitess.io/vitess/go/vt/tableacl"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
+	"gopkg.in/src-d/go-vitess.v1/vt/tableacl"
 )
 
 // Permission associates the required access permission

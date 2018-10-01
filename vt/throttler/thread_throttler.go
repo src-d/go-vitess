@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"time"
 
-	"vitess.io/vitess/go/sync2"
+	"gopkg.in/src-d/go-vitess.v1/sync2"
 
 	"golang.org/x/time/rate"
 )

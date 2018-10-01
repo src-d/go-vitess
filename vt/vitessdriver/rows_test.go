@@ -22,8 +22,8 @@ import (
 	"reflect"
 	"testing"
 
-	"vitess.io/vitess/go/sqltypes"
-	querypb "vitess.io/vitess/go/vt/proto/query"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
 )
 
 var rowsResult1 = sqltypes.Result{

@@ -21,7 +21,7 @@ import (
 	"errors"
 	"fmt"
 
-	"vitess.io/vitess/go/vt/sqlparser"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
 )
 
 // splitAndExpression breaks up the Expr into AND-separated conditions

@@ -17,10 +17,10 @@ limitations under the License.
 package events
 
 import (
-	base "vitess.io/vitess/go/vt/events"
-	"vitess.io/vitess/go/vt/topo"
+	base "gopkg.in/src-d/go-vitess.v1/vt/events"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
 
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 // MigrateServedFrom is an event that describes a single step in the process of

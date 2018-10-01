@@ -26,7 +26,7 @@ import (
 	"time"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/vt/callerid"
+	"gopkg.in/src-d/go-vitess.v1/vt/callerid"
 )
 
 func TestQuerylogzHandlerInvalidLogStats(t *testing.T) {

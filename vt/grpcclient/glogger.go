@@ -20,7 +20,7 @@ import (
 	"fmt"
 
 	"google.golang.org/grpc/grpclog"
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 // grpc doesn't return underlying errors. So, we have
