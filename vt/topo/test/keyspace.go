@@ -20,9 +20,9 @@ import (
 	"testing"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
 
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 // checkKeyspace tests the keyspace part of the API

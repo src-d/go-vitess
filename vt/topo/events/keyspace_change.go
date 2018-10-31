@@ -17,7 +17,7 @@ limitations under the License.
 package events
 
 import (
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 // KeyspaceChange is an event that describes changes to a keyspace.

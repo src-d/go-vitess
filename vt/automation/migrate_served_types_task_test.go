@@ -20,8 +20,8 @@ import (
 	"flag"
 	"testing"
 
-	"vitess.io/vitess/go/vt/vtctl/fakevtctlclient"
-	"vitess.io/vitess/go/vt/vtctl/vtctlclient"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtctl/fakevtctlclient"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtctl/vtctlclient"
 )
 
 func TestMigrateServedTypesTask(t *testing.T) {

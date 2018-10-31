@@ -21,10 +21,10 @@ import (
 	"fmt"
 	"strings"
 
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/vt/sqlparser"
-	"vitess.io/vitess/go/vt/vtgate/engine"
-	"vitess.io/vitess/go/vt/vtgate/vindexes"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtgate/engine"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtgate/vindexes"
 )
 
 var _ builder = (*route)(nil)

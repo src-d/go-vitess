@@ -22,8 +22,8 @@ import (
 	"fmt"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/vt/log"
-	"vitess.io/vitess/go/vt/logutil"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/logutil"
 )
 
 // protocol specifices which RPC client implementation should be used.

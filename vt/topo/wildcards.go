@@ -24,8 +24,8 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/fileutil"
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/fileutil"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 // ResolveKeyspaceWildcard will resolve keyspace wildcards.

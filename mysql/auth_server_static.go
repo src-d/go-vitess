@@ -27,8 +27,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"vitess.io/vitess/go/vt/log"
-	querypb "vitess.io/vitess/go/vt/proto/query"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
 )
 
 var (

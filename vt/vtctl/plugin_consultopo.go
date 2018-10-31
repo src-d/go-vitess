@@ -19,5 +19,5 @@ package vtctl
 import (
 	// Imports consultopo to register the consul implementation of
 	// TopoServer.
-	_ "vitess.io/vitess/go/vt/topo/consultopo"
+	_ "gopkg.in/src-d/go-vitess.v1/vt/topo/consultopo"
 )

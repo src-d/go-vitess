@@ -18,7 +18,7 @@ package automation
 
 import (
 	"golang.org/x/net/context"
-	automationpb "vitess.io/vitess/go/vt/proto/automation"
+	automationpb "gopkg.in/src-d/go-vitess.v1/vt/proto/automation"
 )
 
 // RebuildKeyspaceGraphTask runs vtctl RebuildKeyspaceGraph to migrate a serving

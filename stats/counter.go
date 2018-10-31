@@ -20,8 +20,8 @@ import (
 	"strconv"
 	"time"
 
-	"vitess.io/vitess/go/sync2"
-	"vitess.io/vitess/go/vt/logutil"
+	"gopkg.in/src-d/go-vitess.v1/sync2"
+	"gopkg.in/src-d/go-vitess.v1/vt/logutil"
 )
 
 // logCounterNegative is for throttling adding a negative value to a counter messages in logs

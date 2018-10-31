@@ -27,10 +27,10 @@ import (
 
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 
-	"vitess.io/vitess/go/vt/grpccommon"
-	"vitess.io/vitess/go/vt/vttls"
+	"gopkg.in/src-d/go-vitess.v1/vt/grpccommon"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttls"
 
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 var (

@@ -34,13 +34,13 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/proto"
-	"vitess.io/vitess/go/timer"
-	"vitess.io/vitess/go/vt/health"
-	"vitess.io/vitess/go/vt/log"
-	"vitess.io/vitess/go/vt/servenv"
-	"vitess.io/vitess/go/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/timer"
+	"gopkg.in/src-d/go-vitess.v1/vt/health"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/servenv"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
 
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 const (

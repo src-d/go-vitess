@@ -20,11 +20,11 @@ package vtgateservice
 
 import (
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
-	vtgatepb "vitess.io/vitess/go/vt/proto/vtgate"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
+	vtgatepb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtgate"
 )
 
 // VTGateService is the interface implemented by the VTGate service,

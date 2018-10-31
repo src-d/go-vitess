@@ -21,7 +21,7 @@ import (
 	"strings"
 	"testing"
 
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/planbuilder"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/planbuilder"
 )
 
 var (

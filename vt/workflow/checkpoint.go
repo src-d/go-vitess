@@ -22,9 +22,9 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/golang/protobuf/proto"
-	"vitess.io/vitess/go/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
 
-	workflowpb "vitess.io/vitess/go/vt/proto/workflow"
+	workflowpb "gopkg.in/src-d/go-vitess.v1/vt/proto/workflow"
 )
 
 // CheckpointWriter saves the checkpoint data into topology server.

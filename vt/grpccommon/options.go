@@ -21,7 +21,7 @@ import (
 	"sync"
 
 	"google.golang.org/grpc"
-	"vitess.io/vitess/go/stats"
+	"gopkg.in/src-d/go-vitess.v1/stats"
 )
 
 var (

@@ -19,8 +19,8 @@ package srvtopo
 import (
 	"fmt"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
-	"vitess.io/vitess/go/vt/vttablet/queryservice"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/queryservice"
 )
 
 // TargetStats is an interface that the srvtopo module uses to handle

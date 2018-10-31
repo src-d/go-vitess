@@ -21,15 +21,15 @@ import (
 
 	"google.golang.org/grpc"
 
-	"vitess.io/vitess/go/netutil"
-	"vitess.io/vitess/go/vt/binlog/binlogplayer"
-	"vitess.io/vitess/go/vt/grpcclient"
+	"gopkg.in/src-d/go-vitess.v1/netutil"
+	"gopkg.in/src-d/go-vitess.v1/vt/binlog/binlogplayer"
+	"gopkg.in/src-d/go-vitess.v1/vt/grpcclient"
 
 	"flag"
 
-	binlogdatapb "vitess.io/vitess/go/vt/proto/binlogdata"
-	binlogservicepb "vitess.io/vitess/go/vt/proto/binlogservice"
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	binlogdatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/binlogdata"
+	binlogservicepb "gopkg.in/src-d/go-vitess.v1/vt/proto/binlogservice"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 var (

@@ -17,7 +17,7 @@ limitations under the License.
 package logutil
 
 import (
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 func init() {

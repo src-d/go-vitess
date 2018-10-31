@@ -25,9 +25,9 @@ import (
 
 	"github.com/samuel/go-zookeeper/zk"
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 
-	"vitess.io/vitess/go/fileutil"
+	"gopkg.in/src-d/go-vitess.v1/fileutil"
 )
 
 // CreateRecursive is a helper function on top of Create. It will

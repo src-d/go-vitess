@@ -24,14 +24,14 @@ import (
 	"os"
 	"testing"
 
-	"vitess.io/vitess/go/mysql"
-	"vitess.io/vitess/go/vt/tableacl"
-	"vitess.io/vitess/go/vt/tableacl/simpleacl"
-	"vitess.io/vitess/go/vt/vttablet/endtoend/framework"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/tabletenv"
-	"vitess.io/vitess/go/vt/vttest"
+	"gopkg.in/src-d/go-vitess.v1/mysql"
+	"gopkg.in/src-d/go-vitess.v1/vt/tableacl"
+	"gopkg.in/src-d/go-vitess.v1/vt/tableacl/simpleacl"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/endtoend/framework"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/tabletenv"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttest"
 
-	vttestpb "vitess.io/vitess/go/vt/proto/vttest"
+	vttestpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vttest"
 )
 
 var (

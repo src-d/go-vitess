@@ -1,6 +1,6 @@
 package sqlparser
 
-import querypb "vitess.io/vitess/go/vt/proto/query"
+import querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
 
 // RedactSQLQuery returns a sql string with the params stripped out for display
 func RedactSQLQuery(sql string) (string, error) {

@@ -27,11 +27,11 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/streamlog"
-	"vitess.io/vitess/go/vt/callinfo"
-	"vitess.io/vitess/go/vt/callinfo/fakecallinfo"
-	querypb "vitess.io/vitess/go/vt/proto/query"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/streamlog"
+	"gopkg.in/src-d/go-vitess.v1/vt/callinfo"
+	"gopkg.in/src-d/go-vitess.v1/vt/callinfo/fakecallinfo"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
 )
 
 func TestLogStats(t *testing.T) {

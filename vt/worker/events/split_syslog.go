@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"log/syslog"
 
-	"vitess.io/vitess/go/event/syslogger"
+	"gopkg.in/src-d/go-vitess.v1/event/syslogger"
 )
 
 // Syslog writes a SplitClone event to syslog.

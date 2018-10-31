@@ -20,8 +20,8 @@ import (
 	"testing"
 	"time"
 
-	"vitess.io/vitess/go/race"
-	logutilpb "vitess.io/vitess/go/vt/proto/logutil"
+	"gopkg.in/src-d/go-vitess.v1/race"
+	logutilpb "gopkg.in/src-d/go-vitess.v1/vt/proto/logutil"
 )
 
 func TestLogEvent(t *testing.T) {
