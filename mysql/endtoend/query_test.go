@@ -24,10 +24,10 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/mysql"
-	"vitess.io/vitess/go/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/mysql"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
 )
 
 // Test the SQL query part of the API.

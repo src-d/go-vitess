@@ -19,7 +19,7 @@ package logutil
 import (
 	"time"
 
-	logutilpb "vitess.io/vitess/go/vt/proto/logutil"
+	logutilpb "gopkg.in/src-d/go-vitess.v1/vt/proto/logutil"
 )
 
 // This file contains a few functions to help with proto3.

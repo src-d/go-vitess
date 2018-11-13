@@ -23,7 +23,7 @@ import (
 	"strconv"
 	"time"
 
-	"vitess.io/vitess/go/stats"
+	"gopkg.in/src-d/go-vitess.v1/stats"
 )
 
 var (

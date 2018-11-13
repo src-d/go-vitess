@@ -20,7 +20,7 @@ import (
 	"log/syslog"
 	"testing"
 
-	base "vitess.io/vitess/go/vt/events"
+	base "gopkg.in/src-d/go-vitess.v1/vt/events"
 )
 
 func TestSplitCloneSyslog(t *testing.T) {

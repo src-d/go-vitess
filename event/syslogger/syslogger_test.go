@@ -21,7 +21,7 @@ import (
 	"log/syslog"
 	"testing"
 
-	"vitess.io/vitess/go/event"
+	"gopkg.in/src-d/go-vitess.v1/event"
 )
 
 type TestEvent struct {

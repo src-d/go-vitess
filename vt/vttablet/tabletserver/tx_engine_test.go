@@ -20,10 +20,10 @@ import (
 	"testing"
 	"time"
 
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/tabletenv"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/tabletenv"
 
 	"golang.org/x/net/context"
-	querypb "vitess.io/vitess/go/vt/proto/query"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
 )
 
 func TestTxEngineClose(t *testing.T) {

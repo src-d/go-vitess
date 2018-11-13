@@ -26,13 +26,13 @@ import (
 	"sort"
 	"time"
 
-	"vitess.io/vitess/go/jsonutil"
-	"vitess.io/vitess/go/sync2"
-	"vitess.io/vitess/go/vt/log"
-	"vitess.io/vitess/go/vt/sqlparser"
-	"vitess.io/vitess/go/vt/vtgate/engine"
+	"gopkg.in/src-d/go-vitess.v1/jsonutil"
+	"gopkg.in/src-d/go-vitess.v1/sync2"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtgate/engine"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
 )
 
 var (

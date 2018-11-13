@@ -28,20 +28,20 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/acl"
-	"vitess.io/vitess/go/vt/log"
-	"vitess.io/vitess/go/vt/logutil"
-	"vitess.io/vitess/go/vt/schemamanager"
-	"vitess.io/vitess/go/vt/topo"
-	"vitess.io/vitess/go/vt/topo/topoproto"
-	"vitess.io/vitess/go/vt/vtctl"
-	"vitess.io/vitess/go/vt/vttablet/tmclient"
-	"vitess.io/vitess/go/vt/workflow"
-	"vitess.io/vitess/go/vt/wrangler"
+	"gopkg.in/src-d/go-vitess.v1/acl"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/logutil"
+	"gopkg.in/src-d/go-vitess.v1/vt/schemamanager"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtctl"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tmclient"
+	"gopkg.in/src-d/go-vitess.v1/vt/workflow"
+	"gopkg.in/src-d/go-vitess.v1/vt/wrangler"
 
-	"vitess.io/vitess/go/vt/mysqlctl"
-	logutilpb "vitess.io/vitess/go/vt/proto/logutil"
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	"gopkg.in/src-d/go-vitess.v1/vt/mysqlctl"
+	logutilpb "gopkg.in/src-d/go-vitess.v1/vt/proto/logutil"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 var (

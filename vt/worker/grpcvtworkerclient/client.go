@@ -23,15 +23,15 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
-	"vitess.io/vitess/go/vt/grpcclient"
-	"vitess.io/vitess/go/vt/logutil"
-	"vitess.io/vitess/go/vt/vterrors"
-	"vitess.io/vitess/go/vt/worker/vtworkerclient"
+	"gopkg.in/src-d/go-vitess.v1/vt/grpcclient"
+	"gopkg.in/src-d/go-vitess.v1/vt/logutil"
+	"gopkg.in/src-d/go-vitess.v1/vt/vterrors"
+	"gopkg.in/src-d/go-vitess.v1/vt/worker/vtworkerclient"
 
-	logutilpb "vitess.io/vitess/go/vt/proto/logutil"
-	vtrpcpb "vitess.io/vitess/go/vt/proto/vtrpc"
-	vtworkerdatapb "vitess.io/vitess/go/vt/proto/vtworkerdata"
-	vtworkerservicepb "vitess.io/vitess/go/vt/proto/vtworkerservice"
+	logutilpb "gopkg.in/src-d/go-vitess.v1/vt/proto/logutil"
+	vtrpcpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtrpc"
+	vtworkerdatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtworkerdata"
+	vtworkerservicepb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtworkerservice"
 )
 
 var (

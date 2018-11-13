@@ -29,13 +29,13 @@ import (
 	"sync"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 
-	"vitess.io/vitess/go/vt/logutil"
-	"vitess.io/vitess/go/vt/topo"
-	"vitess.io/vitess/go/vt/workflow"
+	"gopkg.in/src-d/go-vitess.v1/vt/logutil"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/workflow"
 
-	workflowpb "vitess.io/vitess/go/vt/proto/workflow"
+	workflowpb "gopkg.in/src-d/go-vitess.v1/vt/proto/workflow"
 )
 
 const (

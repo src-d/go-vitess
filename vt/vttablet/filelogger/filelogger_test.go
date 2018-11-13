@@ -23,8 +23,8 @@ import (
 	"testing"
 	"time"
 
-	"vitess.io/vitess/go/streamlog"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/tabletenv"
+	"gopkg.in/src-d/go-vitess.v1/streamlog"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/tabletenv"
 )
 
 // TestFileLog sends a stream of five query records to the plugin, and verifies that they are logged.

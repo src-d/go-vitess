@@ -24,8 +24,8 @@ import (
 	"time"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/sync2"
-	"vitess.io/vitess/go/timer"
+	"gopkg.in/src-d/go-vitess.v1/sync2"
+	"gopkg.in/src-d/go-vitess.v1/timer"
 )
 
 var (

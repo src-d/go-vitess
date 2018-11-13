@@ -30,12 +30,12 @@ import (
 	"strings"
 	"unicode"
 
-	"vitess.io/vitess/go/mysql"
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/mysql"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 
-	vschemapb "vitess.io/vitess/go/vt/proto/vschema"
-	vttestpb "vitess.io/vitess/go/vt/proto/vttest"
+	vschemapb "gopkg.in/src-d/go-vitess.v1/vt/proto/vschema"
+	vttestpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vttest"
 )
 
 // Config are the settings used to configure the self-contained Vitess cluster.

@@ -21,7 +21,7 @@ import (
 	"sync"
 	"time"
 
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 // ThrottledLogger will allow logging of messages but won't spam the

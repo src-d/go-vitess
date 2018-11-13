@@ -19,13 +19,13 @@ package tabletmanager
 import (
 	"fmt"
 
-	"vitess.io/vitess/go/vt/vterrors"
+	"gopkg.in/src-d/go-vitess.v1/vt/vterrors"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/tb"
-	"vitess.io/vitess/go/vt/callinfo"
-	"vitess.io/vitess/go/vt/log"
-	"vitess.io/vitess/go/vt/topo/topoproto"
+	"gopkg.in/src-d/go-vitess.v1/tb"
+	"gopkg.in/src-d/go-vitess.v1/vt/callinfo"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
 )
 
 // This file contains the RPC method helpers for the tablet manager.

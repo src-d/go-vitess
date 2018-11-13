@@ -20,7 +20,7 @@ import (
 	"errors"
 	"time"
 
-	"vitess.io/vitess/go/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
 )
 
 // ErrInvalidTime is returned when we fail to parse a datetime

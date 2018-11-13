@@ -20,7 +20,7 @@ import (
 	"flag"
 	"net/http"
 
-	"vitess.io/vitess/go/streamlog"
+	"gopkg.in/src-d/go-vitess.v1/streamlog"
 )
 
 var (

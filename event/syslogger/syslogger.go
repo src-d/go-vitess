@@ -53,8 +53,8 @@ import (
 	"log/syslog"
 	"os"
 
-	"vitess.io/vitess/go/event"
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/event"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 // Syslogger is the interface that events should implement if they want to be

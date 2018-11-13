@@ -29,7 +29,7 @@ import (
 
 	"flag"
 
-	"vitess.io/vitess/go/vt/env"
+	"gopkg.in/src-d/go-vitess.v1/vt/env"
 )
 
 // This files handles the creation of Mycnf objects for the default 'vt'

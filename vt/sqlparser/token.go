@@ -22,8 +22,8 @@ import (
 	"fmt"
 	"io"
 
-	"vitess.io/vitess/go/bytes2"
-	"vitess.io/vitess/go/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/bytes2"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
 )
 
 const (

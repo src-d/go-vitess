@@ -25,7 +25,7 @@ import (
 	"strings"
 	"time"
 
-	"vitess.io/vitess/go/mysql"
+	"gopkg.in/src-d/go-vitess.v1/mysql"
 )
 
 // MySQLManager is an interface to a mysqld process manager, capable

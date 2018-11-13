@@ -24,14 +24,14 @@ import (
 
 	"time"
 
-	"vitess.io/vitess/go/vt/dbconfigs"
-	"vitess.io/vitess/go/vt/topo"
-	"vitess.io/vitess/go/vt/vttablet/queryservice"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/rules"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/schema"
+	"gopkg.in/src-d/go-vitess.v1/vt/dbconfigs"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/queryservice"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/rules"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/schema"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 // BroadcastData is used by the mock Controller to send data

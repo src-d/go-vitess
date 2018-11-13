@@ -41,13 +41,13 @@ import (
 	// register the HTTP handlers for profiling
 	_ "net/http/pprof"
 
-	"vitess.io/vitess/go/event"
-	"vitess.io/vitess/go/netutil"
-	"vitess.io/vitess/go/stats"
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/event"
+	"gopkg.in/src-d/go-vitess.v1/netutil"
+	"gopkg.in/src-d/go-vitess.v1/stats"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 
 	// register the proper init and shutdown hooks for logging
-	_ "vitess.io/vitess/go/vt/logutil"
+	_ "gopkg.in/src-d/go-vitess.v1/vt/logutil"
 )
 
 var (

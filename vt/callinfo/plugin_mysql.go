@@ -23,7 +23,7 @@ import (
 	"html/template"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/mysql"
+	"gopkg.in/src-d/go-vitess.v1/mysql"
 )
 
 // MysqlCallInfo returns an augmented context with a CallInfo structure,

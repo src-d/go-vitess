@@ -26,11 +26,11 @@ import (
 	"testing"
 
 	"google.golang.org/grpc"
-	"vitess.io/vitess/go/vt/servenv"
-	"vitess.io/vitess/go/vt/vtctl/grpcvtctlserver"
-	"vitess.io/vitess/go/vt/vtctl/vtctlclienttest"
+	"gopkg.in/src-d/go-vitess.v1/vt/servenv"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtctl/grpcvtctlserver"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtctl/vtctlclienttest"
 
-	vtctlservicepb "vitess.io/vitess/go/vt/proto/vtctlservice"
+	vtctlservicepb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtctlservice"
 )
 
 // the test here creates a fake server implementation, a fake client

@@ -24,7 +24,7 @@ import (
 	"time"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/vt/callinfo"
+	"gopkg.in/src-d/go-vitess.v1/vt/callinfo"
 )
 
 // QueryDetail is a simple wrapper for Query, Context and a killable conn.

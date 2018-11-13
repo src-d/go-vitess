@@ -25,7 +25,7 @@ import (
 	"net"
 	"strings"
 
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 // AuthServer is the interface that servers must implement to validate

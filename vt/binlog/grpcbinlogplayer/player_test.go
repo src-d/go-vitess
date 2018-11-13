@@ -22,11 +22,11 @@ import (
 
 	"google.golang.org/grpc"
 
-	"vitess.io/vitess/go/vt/binlog/binlogplayertest"
-	"vitess.io/vitess/go/vt/binlog/grpcbinlogstreamer"
+	"gopkg.in/src-d/go-vitess.v1/vt/binlog/binlogplayertest"
+	"gopkg.in/src-d/go-vitess.v1/vt/binlog/grpcbinlogstreamer"
 
-	binlogservicepb "vitess.io/vitess/go/vt/proto/binlogservice"
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	binlogservicepb "gopkg.in/src-d/go-vitess.v1/vt/proto/binlogservice"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 // the test here creates a fake server implementation, a fake client

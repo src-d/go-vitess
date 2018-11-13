@@ -23,7 +23,7 @@ import (
 	"strings"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
 )
 
 var (

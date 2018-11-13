@@ -20,8 +20,8 @@ import (
 	"errors"
 	"testing"
 
-	automationpb "vitess.io/vitess/go/vt/proto/automation"
-	"vitess.io/vitess/go/vt/vtctl/fakevtctlclient"
+	automationpb "gopkg.in/src-d/go-vitess.v1/vt/proto/automation"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtctl/fakevtctlclient"
 )
 
 func testingTaskCreator(taskName string) Task {

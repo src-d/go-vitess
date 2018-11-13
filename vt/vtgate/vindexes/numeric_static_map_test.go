@@ -22,9 +22,9 @@ import (
 
 	"strings"
 
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/testfiles"
-	"vitess.io/vitess/go/vt/key"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/testfiles"
+	"gopkg.in/src-d/go-vitess.v1/vt/key"
 )
 
 // createVindex creates the "numeric_static_map" vindex object which is used by
