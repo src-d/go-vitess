@@ -26,7 +26,7 @@ import (
 	"testing"
 	"time"
 
-	"vitess.io/vitess/go/vt/topo/memorytopo"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/memorytopo"
 )
 
 func TestLongPolling(t *testing.T) {

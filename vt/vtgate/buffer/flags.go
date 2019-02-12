@@ -23,7 +23,7 @@ import (
 	"strings"
 	"time"
 
-	"vitess.io/vitess/go/vt/topo/topoproto"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
 )
 
 var (

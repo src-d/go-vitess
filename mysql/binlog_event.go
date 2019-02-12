@@ -19,7 +19,7 @@ package mysql
 import (
 	"fmt"
 
-	binlogdatapb "vitess.io/vitess/go/vt/proto/binlogdata"
+	binlogdatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/binlogdata"
 )
 
 // BinlogEvent represents a single event from a raw MySQL binlog dump stream.

@@ -24,7 +24,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	context "golang.org/x/net/context"
 
-	automationpb "vitess.io/vitess/go/vt/proto/automation"
+	automationpb "gopkg.in/src-d/go-vitess.v1/vt/proto/automation"
 )
 
 // newTestScheduler constructs a scheduler with test tasks.

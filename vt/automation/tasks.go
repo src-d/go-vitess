@@ -17,7 +17,7 @@ limitations under the License.
 package automation
 
 import (
-	automationpb "vitess.io/vitess/go/vt/proto/automation"
+	automationpb "gopkg.in/src-d/go-vitess.v1/vt/proto/automation"
 )
 
 // Helper functions for "Task" protobuf message.

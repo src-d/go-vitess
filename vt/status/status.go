@@ -25,7 +25,7 @@ import (
 	"net/url"
 	"strings"
 
-	"vitess.io/vitess/go/vt/servenv"
+	"gopkg.in/src-d/go-vitess.v1/vt/servenv"
 )
 
 var (

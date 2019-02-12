@@ -20,10 +20,10 @@ import (
 	"fmt"
 	"strings"
 
-	"vitess.io/vitess/go/vt/sqlparser"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
 
-	binlogdatapb "vitess.io/vitess/go/vt/proto/binlogdata"
-	querypb "vitess.io/vitess/go/vt/proto/query"
+	binlogdatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/binlogdata"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
 )
 
 // PlayerPlan is the execution plan for a player stream.

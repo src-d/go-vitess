@@ -27,15 +27,15 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/vt/health"
-	"vitess.io/vitess/go/vt/mysqlctl/fakemysqldaemon"
-	"vitess.io/vitess/go/vt/topo"
-	"vitess.io/vitess/go/vt/topo/memorytopo"
-	"vitess.io/vitess/go/vt/topo/topoproto"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver"
-	"vitess.io/vitess/go/vt/vttablet/tabletservermock"
+	"gopkg.in/src-d/go-vitess.v1/vt/health"
+	"gopkg.in/src-d/go-vitess.v1/vt/mysqlctl/fakemysqldaemon"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/memorytopo"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletservermock"
 
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 func TestHealthRecordDeduplication(t *testing.T) {

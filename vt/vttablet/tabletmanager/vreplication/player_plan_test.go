@@ -20,8 +20,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	binlogdatapb "vitess.io/vitess/go/vt/proto/binlogdata"
-	"vitess.io/vitess/go/vt/sqlparser"
+	binlogdatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/binlogdata"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
 )
 
 func TestPlayerPlan(t *testing.T) {

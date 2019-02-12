@@ -17,7 +17,7 @@ limitations under the License.
 package sqltypes
 
 import (
-	"vitess.io/vitess/go/vt/vterrors"
+	"gopkg.in/src-d/go-vitess.v1/vt/vterrors"
 )
 
 // QueryResponse represents a query response for ExecuteBatch.

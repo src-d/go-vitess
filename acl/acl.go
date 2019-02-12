@@ -26,7 +26,7 @@ import (
 	"net/http"
 	"sync"
 
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 // This is a list of predefined roles. Applications are free

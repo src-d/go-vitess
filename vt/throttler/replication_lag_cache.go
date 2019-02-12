@@ -20,7 +20,7 @@ import (
 	"sort"
 	"time"
 
-	"vitess.io/vitess/go/vt/discovery"
+	"gopkg.in/src-d/go-vitess.v1/vt/discovery"
 )
 
 // replicationLagCache caches for each replica a bounded list of historic

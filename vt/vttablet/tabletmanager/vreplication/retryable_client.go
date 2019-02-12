@@ -17,8 +17,8 @@ limitations under the License.
 package vreplication
 
 import (
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/vt/binlog/binlogplayer"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/vt/binlog/binlogplayer"
 )
 
 // retryableClient is a wrapper on binlogplayer.DBClient.

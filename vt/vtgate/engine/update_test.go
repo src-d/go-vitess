@@ -20,11 +20,11 @@ import (
 	"errors"
 	"testing"
 
-	"vitess.io/vitess/go/sqltypes"
-	"vitess.io/vitess/go/vt/vtgate/vindexes"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtgate/vindexes"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
-	vschemapb "vitess.io/vitess/go/vt/proto/vschema"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	vschemapb "gopkg.in/src-d/go-vitess.v1/vt/proto/vschema"
 )
 
 func TestUpdateUnsharded(t *testing.T) {

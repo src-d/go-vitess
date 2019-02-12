@@ -23,10 +23,10 @@ import (
 	"strings"
 	"time"
 
-	"vitess.io/vitess/go/vt/dbconnpool"
+	"gopkg.in/src-d/go-vitess.v1/vt/dbconnpool"
 
 	"github.com/golang/glog"
-	"vitess.io/vitess/go/sqlescape"
+	"gopkg.in/src-d/go-vitess.v1/sqlescape"
 
 	"golang.org/x/net/context"
 )

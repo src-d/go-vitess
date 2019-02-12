@@ -25,9 +25,9 @@ import (
 	"flag"
 	"fmt"
 
-	"vitess.io/vitess/go/mysql"
-	"vitess.io/vitess/go/sync2"
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/mysql"
+	"gopkg.in/src-d/go-vitess.v1/sync2"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 var (

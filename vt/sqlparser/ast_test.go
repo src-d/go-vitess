@@ -24,7 +24,7 @@ import (
 	"testing"
 	"unsafe"
 
-	"vitess.io/vitess/go/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
 )
 
 func TestAppend(t *testing.T) {

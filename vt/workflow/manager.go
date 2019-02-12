@@ -26,10 +26,10 @@ import (
 	gouuid "github.com/pborman/uuid"
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/vt/log"
-	"vitess.io/vitess/go/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
 
-	workflowpb "vitess.io/vitess/go/vt/proto/workflow"
+	workflowpb "gopkg.in/src-d/go-vitess.v1/vt/proto/workflow"
 )
 
 var (

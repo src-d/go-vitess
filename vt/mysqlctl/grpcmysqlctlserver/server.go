@@ -24,9 +24,9 @@ import (
 	"google.golang.org/grpc"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/vt/mysqlctl"
+	"gopkg.in/src-d/go-vitess.v1/vt/mysqlctl"
 
-	mysqlctlpb "vitess.io/vitess/go/vt/proto/mysqlctl"
+	mysqlctlpb "gopkg.in/src-d/go-vitess.v1/vt/proto/mysqlctl"
 )
 
 // server is our gRPC server.

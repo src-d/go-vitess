@@ -72,7 +72,7 @@ import (
 	"fmt"
 	"golang.org/x/net/context"
 	"io"
-	vtrpcpb "vitess.io/vitess/go/vt/proto/vtrpc"
+	vtrpcpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtrpc"
 )
 
 // New returns an error with the supplied message.

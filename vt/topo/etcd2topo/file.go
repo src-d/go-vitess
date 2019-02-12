@@ -22,7 +22,7 @@ import (
 	"github.com/coreos/etcd/clientv3"
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
 )
 
 // Create is part of the topo.Conn interface.

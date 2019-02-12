@@ -38,7 +38,7 @@ import (
 	"time"
 
 	"github.com/coreos/etcd/clientv3"
-	"vitess.io/vitess/go/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
 )
 
 // Factory is the consul topo.Factory implementation.

@@ -23,12 +23,12 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
-	"vitess.io/vitess/go/vt/grpcclient"
-	"vitess.io/vitess/go/vt/throttler/throttlerclient"
-	"vitess.io/vitess/go/vt/vterrors"
+	"gopkg.in/src-d/go-vitess.v1/vt/grpcclient"
+	"gopkg.in/src-d/go-vitess.v1/vt/throttler/throttlerclient"
+	"gopkg.in/src-d/go-vitess.v1/vt/vterrors"
 
-	throttlerdatapb "vitess.io/vitess/go/vt/proto/throttlerdata"
-	throttlerservicepb "vitess.io/vitess/go/vt/proto/throttlerservice"
+	throttlerdatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/throttlerdata"
+	throttlerservicepb "gopkg.in/src-d/go-vitess.v1/vt/proto/throttlerservice"
 )
 
 var (

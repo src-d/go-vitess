@@ -19,11 +19,11 @@ package topotools
 import (
 	"reflect"
 
-	"vitess.io/vitess/go/vt/sqlparser"
-	"vitess.io/vitess/go/vt/vterrors"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
+	"gopkg.in/src-d/go-vitess.v1/vt/vterrors"
 
-	vschemapb "vitess.io/vitess/go/vt/proto/vschema"
-	vtrpcpb "vitess.io/vitess/go/vt/proto/vtrpc"
+	vschemapb "gopkg.in/src-d/go-vitess.v1/vt/proto/vschema"
+	vtrpcpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtrpc"
 )
 
 // ApplyVSchemaDDL applies the given DDL statement to the vschema

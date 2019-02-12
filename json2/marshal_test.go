@@ -19,8 +19,8 @@ package json2
 import (
 	"testing"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
-	vschemapb "vitess.io/vitess/go/vt/proto/vschema"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	vschemapb "gopkg.in/src-d/go-vitess.v1/vt/proto/vschema"
 )
 
 func TestMarshalPB(t *testing.T) {

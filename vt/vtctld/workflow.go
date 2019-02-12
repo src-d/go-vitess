@@ -22,16 +22,16 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/flagutil"
-	"vitess.io/vitess/go/vt/log"
-	"vitess.io/vitess/go/vt/schemamanager/schemaswap"
-	"vitess.io/vitess/go/vt/servenv"
-	"vitess.io/vitess/go/vt/topo"
-	"vitess.io/vitess/go/vt/vtctl"
-	"vitess.io/vitess/go/vt/workflow"
-	"vitess.io/vitess/go/vt/workflow/resharding"
-	"vitess.io/vitess/go/vt/workflow/reshardingworkflowgen"
-	"vitess.io/vitess/go/vt/workflow/topovalidator"
+	"gopkg.in/src-d/go-vitess.v1/flagutil"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/schemamanager/schemaswap"
+	"gopkg.in/src-d/go-vitess.v1/vt/servenv"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtctl"
+	"gopkg.in/src-d/go-vitess.v1/vt/workflow"
+	"gopkg.in/src-d/go-vitess.v1/vt/workflow/resharding"
+	"gopkg.in/src-d/go-vitess.v1/vt/workflow/reshardingworkflowgen"
+	"gopkg.in/src-d/go-vitess.v1/vt/workflow/topovalidator"
 )
 
 var (

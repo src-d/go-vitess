@@ -24,7 +24,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	"vitess.io/vitess/go/stats"
+	"gopkg.in/src-d/go-vitess.v1/stats"
 )
 
 func TestVariables(t *testing.T) {

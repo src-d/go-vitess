@@ -22,7 +22,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 
-	vschemapb "vitess.io/vitess/go/vt/proto/vschema"
+	vschemapb "gopkg.in/src-d/go-vitess.v1/vt/proto/vschema"
 )
 
 // This file contains the utility methods to manage SrvVSchema objects.

@@ -4,7 +4,7 @@ import (
 	"flag"
 	"strings"
 
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 // TabletTypeListVar defines a []TabletType flag with the specified name and usage

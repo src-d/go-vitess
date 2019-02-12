@@ -19,8 +19,8 @@ package automation
 import (
 	"strings"
 
-	automationpb "vitess.io/vitess/go/vt/proto/automation"
-	"vitess.io/vitess/go/vt/topo/topoproto"
+	automationpb "gopkg.in/src-d/go-vitess.v1/vt/proto/automation"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
 )
 
 // HorizontalReshardingTask is a cluster operation which allows to increase the number of shards.

@@ -27,12 +27,12 @@ import (
 	"strconv"
 	"time"
 
-	"vitess.io/vitess/go/vt/vterrors"
+	"gopkg.in/src-d/go-vitess.v1/vt/vterrors"
 
-	"vitess.io/vitess/go/timer"
-	"vitess.io/vitess/go/vt/log"
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
-	"vitess.io/vitess/go/vt/topo/topoproto"
+	"gopkg.in/src-d/go-vitess.v1/timer"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
 )
 
 var (

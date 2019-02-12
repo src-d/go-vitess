@@ -20,8 +20,8 @@ import (
 	"flag"
 	"testing"
 
-	"vitess.io/vitess/go/vt/worker/fakevtworkerclient"
-	"vitess.io/vitess/go/vt/worker/vtworkerclient"
+	"gopkg.in/src-d/go-vitess.v1/vt/worker/fakevtworkerclient"
+	"gopkg.in/src-d/go-vitess.v1/vt/worker/vtworkerclient"
 )
 
 func TestVerticalSplitCloneTask(t *testing.T) {

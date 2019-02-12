@@ -18,8 +18,8 @@ package mysqlctl
 
 import (
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/vt/mysqlctl/tmutils"
-	tabletmanagerdatapb "vitess.io/vitess/go/vt/proto/tabletmanagerdata"
+	"gopkg.in/src-d/go-vitess.v1/vt/mysqlctl/tmutils"
+	tabletmanagerdatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/tabletmanagerdata"
 )
 
 // GetPermissions lists the permissions on the mysqld

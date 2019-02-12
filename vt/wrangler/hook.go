@@ -21,9 +21,9 @@ import (
 	"strings"
 
 	"golang.org/x/net/context"
-	hk "vitess.io/vitess/go/vt/hook"
+	hk "gopkg.in/src-d/go-vitess.v1/vt/hook"
 
-	topodatapb "vitess.io/vitess/go/vt/proto/topodata"
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 // ExecuteHook will run the hook on the tablet

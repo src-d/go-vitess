@@ -27,7 +27,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
 )
 
 func TestLocalControllerNoSchemaChanges(t *testing.T) {
