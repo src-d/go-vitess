@@ -160,6 +160,10 @@ func InitTabletMap(ts *topo.Server, tpb *vttestpb.VTTestTopology, mysqld mysqlct
 			// iterate through the shards
 			for _, spb := range kpb.Shards {
 				shard := spb.Name
+				ts.CreateShard(ctx, keyspace, shard)
+				if err != nil {
+					return fmt.Errorf("CreateShard(%v:%v) failed: %v", keyspace, shard, err)
+				}
 
 				for _, cell := range tpb.Cells {
 					dbname := spb.DbNameOverride
@@ -479,6 +483,12 @@ func (itc *internalTabletConn) VStream(ctx context.Context, target *querypb.Targ
 	return tabletconn.ErrorFromGRPC(vterrors.ToGRPC(err))
 }
 
+// VStreamRows is part of the QueryService interface.
+func (itc *internalTabletConn) VStreamRows(ctx context.Context, target *querypb.Target, query string, lastpk *querypb.QueryResult, send func(*binlogdatapb.VStreamRowsResponse) error) error {
+	err := itc.tablet.qsc.QueryService().VStreamRows(ctx, target, query, lastpk, send)
+	return tabletconn.ErrorFromGRPC(vterrors.ToGRPC(err))
+}
+
 //
 // TabletManagerClient implementation
 //
@@ -671,6 +681,10 @@ func (itmc *internalTabletManagerClient) DemoteMaster(ctx context.Context, table
 	return "", fmt.Errorf("not implemented in vtcombo")
 }
 
+func (itmc *internalTabletManagerClient) UndoDemoteMaster(ctx context.Context, tablet *topodatapb.Tablet) error {
+	return fmt.Errorf("not implemented in vtcombo")
+}
+
 func (itmc *internalTabletManagerClient) PromoteSlaveWhenCaughtUp(ctx context.Context, tablet *topodatapb.Tablet, pos string) (string, error) {
 	return "", fmt.Errorf("not implemented in vtcombo")
 }
@@ -695,7 +709,7 @@ func (itmc *internalTabletManagerClient) PromoteSlave(ctx context.Context, table
 	return "", fmt.Errorf("not implemented in vtcombo")
 }
 
-func (itmc *internalTabletManagerClient) Backup(ctx context.Context, tablet *topodatapb.Tablet, concurrency int) (logutil.EventStream, error) {
+func (itmc *internalTabletManagerClient) Backup(ctx context.Context, tablet *topodatapb.Tablet, concurrency int, allowMaster bool) (logutil.EventStream, error) {
 	return nil, fmt.Errorf("not implemented in vtcombo")
 }
 

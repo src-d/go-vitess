@@ -21,6 +21,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"time"
 
 	"gopkg.in/src-d/go-vitess.v1/mysql"
 	"gopkg.in/src-d/go-vitess.v1/sqltypes"
@@ -31,10 +32,14 @@ import (
 	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/schema"
 
 	binlogdatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/binlogdata"
-	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
 )
 
-var packetSize = flag.Int("vstream_packet_size", 10000, "Suggested packet size for VReplication streamer. This is used only as a recommendation. The actual packet size may be more or less than this amount.")
+var packetSize = flag.Int("vstream_packet_size", 30000, "Suggested packet size for VReplication streamer. This is used only as a recommendation. The actual packet size may be more or less than this amount.")
+
+// heartbeatTime is set to slightly below 1s, compared to idleTimeout
+// set by VPlayer at slightly above 1s. This minimizes conflicts
+// between the two timeouts.
+var heartbeatTime = 900 * time.Millisecond
 
 type vstreamer struct {
 	ctx    context.Context
@@ -49,11 +54,18 @@ type vstreamer struct {
 	// A kschema is a VSchema for just one keyspace.
 	kevents chan *vindexes.KeyspaceSchema
 	kschema *vindexes.KeyspaceSchema
-	plans   map[uint64]*Plan
+	plans   map[uint64]*streamerPlan
 
 	// format and pos are updated by parseEvent.
 	format mysql.BinlogFormat
 	pos    mysql.Position
+}
+
+// streamerPlan extends the original plan to also include
+// the TableMap which is used to extract values from the binlog events.
+type streamerPlan struct {
+	*Plan
+	TableMap *mysql.TableMap
 }
 
 func newVStreamer(ctx context.Context, cp *mysql.ConnParams, se *schema.Engine, startPos string, filter *binlogdatapb.Filter, kschema *vindexes.KeyspaceSchema, send func([]*binlogdatapb.VEvent) error) *vstreamer {
@@ -68,7 +80,7 @@ func newVStreamer(ctx context.Context, cp *mysql.ConnParams, se *schema.Engine, 
 		send:     send,
 		kevents:  make(chan *vindexes.KeyspaceSchema, 1),
 		kschema:  kschema,
-		plans:    make(map[uint64]*Plan),
+		plans:    make(map[uint64]*streamerPlan),
 	}
 }
 
@@ -132,9 +144,8 @@ func (vs *vstreamer) parseEvents(ctx context.Context, events <-chan mysql.Binlog
 		case binlogdatapb.VEventType_GTID, binlogdatapb.VEventType_BEGIN, binlogdatapb.VEventType_FIELD:
 			// We never have to send GTID, BEGIN or FIELD events on their own.
 			bufferedEvents = append(bufferedEvents, vevent)
-		case binlogdatapb.VEventType_COMMIT, binlogdatapb.VEventType_DDL:
-			// COMMIT and DDL are terminal. There may be no more events after
-			// these for a long time. So, we have to send whatever we have.
+		case binlogdatapb.VEventType_COMMIT, binlogdatapb.VEventType_DDL, binlogdatapb.VEventType_HEARTBEAT:
+			// COMMIT, DDL and HEARTBEAT must be immediately sent.
 			bufferedEvents = append(bufferedEvents, vevent)
 			vevents := bufferedEvents
 			bufferedEvents = nil
@@ -167,7 +178,16 @@ func (vs *vstreamer) parseEvents(ctx context.Context, events <-chan mysql.Binlog
 	}
 
 	// Main loop: calls bufferAndTransmit as events arrive.
+	timer := time.NewTimer(heartbeatTime)
+	defer timer.Stop()
 	for {
+		timer.Reset(heartbeatTime)
+		// Drain event if timer fired before reset.
+		select {
+		case <-timer.C:
+		default:
+		}
+
 		select {
 		case ev, ok := <-events:
 			if !ok {
@@ -196,6 +216,18 @@ func (vs *vstreamer) parseEvents(ctx context.Context, events <-chan mysql.Binlog
 			}
 		case <-ctx.Done():
 			return nil
+		case <-timer.C:
+			now := time.Now().UnixNano()
+			if err := bufferAndTransmit(&binlogdatapb.VEvent{
+				Type:        binlogdatapb.VEventType_HEARTBEAT,
+				Timestamp:   now / 1e9,
+				CurrentTime: now,
+			}); err != nil {
+				if err == io.EOF {
+					return nil
+				}
+				return fmt.Errorf("error sending event: %v", err)
+			}
 		}
 	}
 }
@@ -309,38 +341,35 @@ func (vs *vstreamer) parseEvent(ev mysql.BinlogEvent) ([]*binlogdatapb.VEvent, e
 			vs.plans[id] = nil
 			return nil, nil
 		}
-		ti := vs.se.GetTable(sqlparser.NewTableIdent(tm.Name))
-		if ti == nil {
+		st := vs.se.GetTable(sqlparser.NewTableIdent(tm.Name))
+		if st == nil {
 			return nil, fmt.Errorf("unknown table %v in schema", tm.Name)
 		}
-		if len(ti.Columns) < len(tm.Types) {
-			return nil, fmt.Errorf("cannot determine table columns for %s: event has %d columns, current schema has %d: %#v", tm.Name, len(tm.Types), len(ti.Columns), ev)
+		if len(st.Columns) < len(tm.Types) {
+			return nil, fmt.Errorf("cannot determine table columns for %s: event has %d columns, current schema has %d: %#v", tm.Name, len(tm.Types), len(st.Columns), ev)
 		}
 		table := &Table{
-			TableMap: tm,
+			Name: st.Name.String(),
 			// Columns should be truncated to match those in tm.
-			Columns: ti.Columns[:len(tm.Types)],
+			Columns: st.Columns[:len(tm.Types)],
 		}
 		plan, err := buildPlan(table, vs.kschema, vs.filter)
 		if err != nil {
 			return nil, err
 		}
-		vs.plans[id] = plan
 		if plan == nil {
+			vs.plans[id] = nil
 			return nil, nil
 		}
-		fields := make([]*querypb.Field, len(plan.ColExprs))
-		for i, ce := range plan.ColExprs {
-			fields[i] = &querypb.Field{
-				Name: ce.Alias.String(),
-				Type: ce.Type,
-			}
+		vs.plans[id] = &streamerPlan{
+			Plan:     plan,
+			TableMap: tm,
 		}
 		vevents = append(vevents, &binlogdatapb.VEvent{
 			Type: binlogdatapb.VEventType_FIELD,
 			FieldEvent: &binlogdatapb.FieldEvent{
 				TableName: plan.Table.Name,
-				Fields:    fields,
+				Fields:    plan.fields(),
 			},
 		})
 	case ev.IsWriteRows() || ev.IsDeleteRows() || ev.IsUpdateRows():
@@ -354,7 +383,7 @@ func (vs *vstreamer) parseEvent(ev mysql.BinlogEvent) ([]*binlogdatapb.VEvent, e
 		if plan == nil {
 			return nil, nil
 		}
-		rows, err := ev.Rows(vs.format, plan.Table.TableMap)
+		rows, err := ev.Rows(vs.format, plan.TableMap)
 		if err != nil {
 			return nil, err
 		}
@@ -392,6 +421,7 @@ func (vs *vstreamer) parseEvent(ev mysql.BinlogEvent) ([]*binlogdatapb.VEvent, e
 	}
 	for _, vevent := range vevents {
 		vevent.Timestamp = int64(ev.Timestamp())
+		vevent.CurrentTime = time.Now().UnixNano()
 	}
 	return vevents, nil
 }
@@ -407,12 +437,15 @@ func (vs *vstreamer) rebuildPlans() error {
 		if err != nil {
 			return err
 		}
-		vs.plans[id] = newPlan
+		vs.plans[id] = &streamerPlan{
+			Plan:     newPlan,
+			TableMap: plan.TableMap,
+		}
 	}
 	return nil
 }
 
-func (vs *vstreamer) extractRowAndFilter(plan *Plan, data []byte, dataColumns, nullColumns mysql.Bitmap) (bool, []sqltypes.Value, error) {
+func (vs *vstreamer) extractRowAndFilter(plan *streamerPlan, data []byte, dataColumns, nullColumns mysql.Bitmap) (bool, []sqltypes.Value, error) {
 	if len(data) == 0 {
 		return false, nil, nil
 	}
@@ -427,7 +460,7 @@ func (vs *vstreamer) extractRowAndFilter(plan *Plan, data []byte, dataColumns, n
 			valueIndex++
 			continue
 		}
-		value, l, err := mysql.CellValue(data, pos, plan.Table.Types[colNum], plan.Table.Metadata[colNum], plan.Table.Columns[colNum].Type)
+		value, l, err := mysql.CellValue(data, pos, plan.TableMap.Types[colNum], plan.TableMap.Metadata[colNum], plan.Table.Columns[colNum].Type)
 		if err != nil {
 			return false, nil, err
 		}

@@ -24,16 +24,19 @@ import (
 	"fmt"
 	"time"
 
-	"gopkg.in/src-d/go-vitess.v1/vt/vterrors"
-
 	"golang.org/x/net/context"
+
 	"gopkg.in/src-d/go-vitess.v1/flagutil"
 	"gopkg.in/src-d/go-vitess.v1/netutil"
 	"gopkg.in/src-d/go-vitess.v1/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/logutil"
 	"gopkg.in/src-d/go-vitess.v1/vt/mysqlctl"
-	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 	"gopkg.in/src-d/go-vitess.v1/vt/topo"
 	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
+	"gopkg.in/src-d/go-vitess.v1/vt/topotools"
+	"gopkg.in/src-d/go-vitess.v1/vt/vterrors"
+
+	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
 )
 
 var (
@@ -122,22 +125,17 @@ func (agent *ActionAgent) InitTablet(port, gRPCPort int32) error {
 		}
 	}
 
-	// See if we need to add the tablet's cell to the shard's cell list.
-	if !si.HasCell(agent.TabletAlias.Cell) {
-		if err := agent.withRetry(ctx, "updating Cells list in Shard if necessary", func() error {
-			si, err = agent.TopoServer.UpdateShardFields(ctx, *initKeyspace, shard, func(si *topo.ShardInfo) error {
-				if si.HasCell(agent.TabletAlias.Cell) {
-					// Someone else already did it.
-					return topo.NewError(topo.NoUpdateNeeded, agent.TabletAlias.String())
-				}
-				si.Cells = append(si.Cells, agent.TabletAlias.Cell)
-				return nil
-			})
-			return err
-		}); err != nil {
-			return vterrors.Wrap(err, "couldn't add tablet's cell to shard record")
-		}
+	// Rebuild keyspace graph if this the first tablet in this keyspace/cell
+	_, err = agent.TopoServer.GetSrvKeyspace(ctx, agent.TabletAlias.Cell, *initKeyspace)
+	switch {
+	case err == nil:
+		// NOOP
+	case topo.IsErrType(err, topo.NoNode):
+		err = topotools.RebuildKeyspace(ctx, logutil.NewConsoleLogger(), agent.TopoServer, *initKeyspace, []string{agent.TabletAlias.Cell})
+	default:
+		return vterrors.Wrap(err, "InitTablet failed to read srvKeyspace")
 	}
+
 	log.Infof("Initializing the tablet for type %v", tabletType)
 
 	// figure out the hostname
@@ -211,7 +209,7 @@ func (agent *ActionAgent) InitTablet(port, gRPCPort int32) error {
 	if *initPopulateMetadata {
 		agent.setTablet(tablet)
 		localMetadata := agent.getLocalMetadataValues(tablet.Type)
-		err := mysqlctl.PopulateMetadataTables(agent.MysqlDaemon, localMetadata)
+		err := mysqlctl.PopulateMetadataTables(agent.MysqlDaemon, localMetadata, topoproto.TabletDbName(tablet))
 		if err != nil {
 			return vterrors.Wrap(err, "failed to -init_populate_metadata")
 		}

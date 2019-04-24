@@ -23,6 +23,7 @@ package mysqlctl
 import (
 	"errors"
 	"fmt"
+	"net"
 	"strings"
 	"time"
 
@@ -160,6 +161,17 @@ var (
 	ErrNotMaster = errors.New("no master status")
 )
 
+// SetSuperReadOnly set/unset the super_read_only flag
+func (mysqld *Mysqld) SetSuperReadOnly(on bool) error {
+	query := "SET GLOBAL super_read_only = "
+	if on {
+		query += "ON"
+	} else {
+		query += "OFF"
+	}
+	return mysqld.ExecuteSuperQuery(context.TODO(), query)
+}
+
 // WaitMasterPos lets slaves wait to given replication position
 func (mysqld *Mysqld) WaitMasterPos(ctx context.Context, targetPos mysql.Position) error {
 	// Get a connection.
@@ -223,6 +235,7 @@ func (mysqld *Mysqld) SetSlavePosition(ctx context.Context, pos mysql.Position) 
 	defer conn.Recycle()
 
 	cmds := conn.SetSlavePositionCommands(pos)
+	log.Infof("Executing commands to set slave position: %v", cmds)
 	return mysqld.executeSuperQueryListConn(ctx, conn, cmds)
 }
 
@@ -272,6 +285,7 @@ func (mysqld *Mysqld) ResetReplication(ctx context.Context) error {
 //
 // Array indices for the results of SHOW PROCESSLIST.
 const (
+	//lint:ignore U1000 unused fields are needed for correct indexing of result columns
 	colConnectionID = iota
 	colUsername
 	colClientAddr
@@ -306,7 +320,12 @@ func FindSlaves(mysqld MysqlDaemon) ([]string, error) {
 			if err != nil {
 				return nil, fmt.Errorf("FindSlaves: malformed addr %v", err)
 			}
-			addrs = append(addrs, host)
+			var ips []string
+			ips, err = net.LookupHost(host)
+			if err != nil {
+				return nil, fmt.Errorf("FindSlaves: LookupHost failed %v", err)
+			}
+			addrs = append(addrs, ips...)
 		}
 	}
 

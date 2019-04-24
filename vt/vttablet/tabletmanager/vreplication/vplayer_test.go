@@ -92,7 +92,7 @@ func TestPlayerFilters(t *testing.T) {
 		input: "insert into src1 values(1, 'aaa')",
 		output: []string{
 			"begin",
-			"insert into dst1 set id=1, val='aaa'",
+			"insert into dst1(id,val) values (1,'aaa')",
 			"/update _vt.vreplication set pos=",
 			"commit",
 		},
@@ -129,7 +129,7 @@ func TestPlayerFilters(t *testing.T) {
 		input: "insert into src2 values(1, 2, 3)",
 		output: []string{
 			"begin",
-			"insert into dst2 set id=1, val1=2, sval2=3, rcount=1 on duplicate key update val1=2, sval2=sval2+3, rcount=rcount+1",
+			"insert into dst2(id,val1,sval2,rcount) values (1,2,ifnull(3, 0),1) on duplicate key update val1=values(val1), sval2=sval2+ifnull(values(sval2), 0), rcount=rcount+1",
 			"/update _vt.vreplication set pos=",
 			"commit",
 		},
@@ -142,7 +142,7 @@ func TestPlayerFilters(t *testing.T) {
 		input: "update src2 set val1=5, val2=1 where id=1",
 		output: []string{
 			"begin",
-			"update dst2 set val1=5, sval2=sval2-3+1 where id=1",
+			"update dst2 set val1=5, sval2=sval2-ifnull(3, 0)+ifnull(1, 0), rcount=rcount where id=1",
 			"/update _vt.vreplication set pos=",
 			"commit",
 		},
@@ -155,7 +155,7 @@ func TestPlayerFilters(t *testing.T) {
 		input: "delete from src2 where id=1",
 		output: []string{
 			"begin",
-			"update dst2 set val1=NULL, sval2=sval2-1, rcount=rcount-1 where id=1",
+			"update dst2 set val1=null, sval2=sval2-ifnull(1, 0), rcount=rcount-1 where id=1",
 			"/update _vt.vreplication set pos=",
 			"commit",
 		},
@@ -168,7 +168,7 @@ func TestPlayerFilters(t *testing.T) {
 		input: "insert into src3 values(1, 'aaa')",
 		output: []string{
 			"begin",
-			"insert ignore into dst3 set id=1, val='aaa'",
+			"insert ignore into dst3(id,val) values (1,'aaa')",
 			"/update _vt.vreplication set pos=",
 			"commit",
 		},
@@ -181,7 +181,7 @@ func TestPlayerFilters(t *testing.T) {
 		input: "update src3 set val='bbb'",
 		output: []string{
 			"begin",
-			"insert ignore into dst3 set id=1, val='bbb'",
+			"insert ignore into dst3(id,val) values (1,'bbb')",
 			"/update _vt.vreplication set pos=",
 			"commit",
 		},
@@ -206,7 +206,7 @@ func TestPlayerFilters(t *testing.T) {
 		input: "insert into yes values(1, 'aaa')",
 		output: []string{
 			"begin",
-			"insert into yes set id=1, val='aaa'",
+			"insert into yes(id,val) values (1,'aaa')",
 			"/update _vt.vreplication set pos=",
 			"commit",
 		},
@@ -236,7 +236,7 @@ func TestPlayerFilters(t *testing.T) {
 		input: "insert into nopk values(1, 'aaa')",
 		output: []string{
 			"begin",
-			"insert into nopk set id=1, val='aaa'",
+			"insert into nopk(id,val) values (1,'aaa')",
 			"/update _vt.vreplication set pos=",
 			"commit",
 		},
@@ -249,7 +249,8 @@ func TestPlayerFilters(t *testing.T) {
 		input: "update nopk set val='bbb' where id=1",
 		output: []string{
 			"begin",
-			"update nopk set val='bbb' where id=1 and val='aaa'",
+			"delete from nopk where id=1 and val='aaa'",
+			"insert into nopk(id,val) values (1,'bbb')",
 			"/update _vt.vreplication set pos=",
 			"commit",
 		},
@@ -309,7 +310,7 @@ func TestPlayerUpdates(t *testing.T) {
 	}{{
 		// Start with all nulls
 		input:  "insert into t1 values(1, null, null, null)",
-		output: "insert into t1 set id=1, grouped=null, ungrouped=null, summed=0, rcount=1 on duplicate key update ungrouped=null, summed=summed, rcount=rcount+1",
+		output: "insert into t1(id,grouped,ungrouped,summed,rcount) values (1,null,null,ifnull(null, 0),1) on duplicate key update ungrouped=values(ungrouped), summed=summed+ifnull(values(summed), 0), rcount=rcount+1",
 		table:  "t1",
 		data: [][]string{
 			{"1", "", "", "0", "1"},
@@ -317,7 +318,7 @@ func TestPlayerUpdates(t *testing.T) {
 	}, {
 		// null to null values
 		input:  "update t1 set grouped=1 where id=1",
-		output: "",
+		output: "update t1 set ungrouped=null, summed=summed-ifnull(null, 0)+ifnull(null, 0), rcount=rcount where id=1",
 		table:  "t1",
 		data: [][]string{
 			{"1", "", "", "0", "1"},
@@ -325,7 +326,7 @@ func TestPlayerUpdates(t *testing.T) {
 	}, {
 		// null to non-null values
 		input:  "update t1 set ungrouped=1, summed=1 where id=1",
-		output: "update t1 set ungrouped=1, summed=summed+1 where id=1",
+		output: "update t1 set ungrouped=1, summed=summed-ifnull(null, 0)+ifnull(1, 0), rcount=rcount where id=1",
 		table:  "t1",
 		data: [][]string{
 			{"1", "", "1", "1", "1"},
@@ -333,7 +334,7 @@ func TestPlayerUpdates(t *testing.T) {
 	}, {
 		// non-null to non-null values
 		input:  "update t1 set ungrouped=2, summed=2 where id=1",
-		output: "update t1 set ungrouped=2, summed=summed-1+2 where id=1",
+		output: "update t1 set ungrouped=2, summed=summed-ifnull(1, 0)+ifnull(2, 0), rcount=rcount where id=1",
 		table:  "t1",
 		data: [][]string{
 			{"1", "", "2", "2", "1"},
@@ -341,7 +342,7 @@ func TestPlayerUpdates(t *testing.T) {
 	}, {
 		// non-null to null values
 		input:  "update t1 set ungrouped=null, summed=null where id=1",
-		output: "update t1 set ungrouped=null, summed=summed-2 where id=1",
+		output: "update t1 set ungrouped=null, summed=summed-ifnull(2, 0)+ifnull(null, 0), rcount=rcount where id=1",
 		table:  "t1",
 		data: [][]string{
 			{"1", "", "", "0", "1"},
@@ -349,7 +350,7 @@ func TestPlayerUpdates(t *testing.T) {
 	}, {
 		// insert non-null values
 		input:  "insert into t1 values(2, 2, 3, 4)",
-		output: "insert into t1 set id=2, grouped=2, ungrouped=3, summed=4, rcount=1 on duplicate key update ungrouped=3, summed=summed+4, rcount=rcount+1",
+		output: "insert into t1(id,grouped,ungrouped,summed,rcount) values (2,2,3,ifnull(4, 0),1) on duplicate key update ungrouped=values(ungrouped), summed=summed+ifnull(values(summed), 0), rcount=rcount+1",
 		table:  "t1",
 		data: [][]string{
 			{"1", "", "", "0", "1"},
@@ -358,7 +359,7 @@ func TestPlayerUpdates(t *testing.T) {
 	}, {
 		// delete non-null values
 		input:  "delete from t1 where id=2",
-		output: "update t1 set ungrouped=NULL, summed=summed-4, rcount=rcount-1 where id=2",
+		output: "update t1 set ungrouped=null, summed=summed-ifnull(4, 0), rcount=rcount-1 where id=2",
 		table:  "t1",
 		data: [][]string{
 			{"1", "", "", "0", "1"},
@@ -386,6 +387,60 @@ func TestPlayerUpdates(t *testing.T) {
 			expectData(t, tcases.table, tcases.data)
 		}
 	}
+}
+
+func TestPlayerRowMove(t *testing.T) {
+	defer deleteTablet(addTablet(100, "0", topodatapb.TabletType_REPLICA, true, true))
+
+	execStatements(t, []string{
+		"create table src(id int, val1 int, val2 int, primary key(id))",
+		fmt.Sprintf("create table %s.dst(val1 int, sval2 int, rcount int, primary key(val1))", vrepldb),
+	})
+	defer execStatements(t, []string{
+		"drop table src",
+		fmt.Sprintf("drop table %s.dst", vrepldb),
+	})
+	env.SchemaEngine.Reload(context.Background())
+
+	filter := &binlogdatapb.Filter{
+		Rules: []*binlogdatapb.Rule{{
+			Match:  "dst",
+			Filter: "select val1, sum(val2) as sval2, count(*) as rcount from src group by val1",
+		}},
+	}
+	cancel, _ := startVReplication(t, filter, binlogdatapb.OnDDLAction_IGNORE, "")
+	defer cancel()
+
+	execStatements(t, []string{
+		"insert into src values(1, 1, 1), (2, 2, 2), (3, 2, 3)",
+	})
+	expectDBClientQueries(t, []string{
+		"begin",
+		"insert into dst(val1,sval2,rcount) values (1,ifnull(1, 0),1) on duplicate key update sval2=sval2+ifnull(values(sval2), 0), rcount=rcount+1",
+		"insert into dst(val1,sval2,rcount) values (2,ifnull(2, 0),1) on duplicate key update sval2=sval2+ifnull(values(sval2), 0), rcount=rcount+1",
+		"insert into dst(val1,sval2,rcount) values (2,ifnull(3, 0),1) on duplicate key update sval2=sval2+ifnull(values(sval2), 0), rcount=rcount+1",
+		"/update _vt.vreplication set pos=",
+		"commit",
+	})
+	expectData(t, "dst", [][]string{
+		{"1", "1", "1"},
+		{"2", "5", "2"},
+	})
+
+	execStatements(t, []string{
+		"update src set val1=1, val2=4 where id=3",
+	})
+	expectDBClientQueries(t, []string{
+		"begin",
+		"update dst set sval2=sval2-ifnull(3, 0), rcount=rcount-1 where val1=2",
+		"insert into dst(val1,sval2,rcount) values (1,ifnull(4, 0),1) on duplicate key update sval2=sval2+ifnull(values(sval2), 0), rcount=rcount+1",
+		"/update _vt.vreplication set pos=",
+		"commit",
+	})
+	expectData(t, "dst", [][]string{
+		{"1", "5", "2"},
+		{"2", "2", "1"},
+	})
 }
 
 func TestPlayerTypes(t *testing.T) {
@@ -437,42 +492,42 @@ func TestPlayerTypes(t *testing.T) {
 		data   [][]string
 	}{{
 		input:  "insert into vitess_ints values(-128, 255, -32768, 65535, -8388608, 16777215, -2147483648, 4294967295, -9223372036854775808, 18446744073709551615, 2012)",
-		output: "insert into vitess_ints set tiny=-128, tinyu=255, small=-32768, smallu=65535, medium=-8388608, mediumu=16777215, normal=-2147483648, normalu=4294967295, big=-9223372036854775808, bigu=18446744073709551615, y=2012",
+		output: "insert into vitess_ints(tiny,tinyu,small,smallu,medium,mediumu,normal,normalu,big,bigu,y) values (-128,255,-32768,65535,-8388608,16777215,-2147483648,4294967295,-9223372036854775808,18446744073709551615,2012)",
 		table:  "vitess_ints",
 		data: [][]string{
 			{"-128", "255", "-32768", "65535", "-8388608", "16777215", "-2147483648", "4294967295", "-9223372036854775808", "18446744073709551615", "2012"},
 		},
 	}, {
 		input:  "insert into vitess_fracts values(1, 1.99, 2.99, 3.99, 4.99)",
-		output: "insert into vitess_fracts set id=1, deci=1.99, num=2.99, f=3.99E+00, d=4.99E+00",
+		output: "insert into vitess_fracts(id,deci,num,f,d) values (1,1.99,2.99,3.99E+00,4.99E+00)",
 		table:  "vitess_fracts",
 		data: [][]string{
 			{"1", "1.99", "2.99", "3.99", "4.99"},
 		},
 	}, {
 		input:  "insert into vitess_strings values('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'a', 'a,b')",
-		output: "insert into vitess_strings set vb='a', c='b', vc='c', b='d\\0\\0\\0', tb='e', bl='f', ttx='g', tx='h', en='1', s='3'",
+		output: "insert into vitess_strings(vb,c,vc,b,tb,bl,ttx,tx,en,s) values ('a','b','c','d\\0\\0\\0','e','f','g','h','1','3')",
 		table:  "vitess_strings",
 		data: [][]string{
 			{"a", "b", "c", "d\x00\x00\x00", "e", "f", "g", "h", "a", "a,b"},
 		},
 	}, {
 		input:  "insert into vitess_misc values(1, '\x01', '2012-01-01', '2012-01-01 15:45:45', '15:45:45', point(1, 2))",
-		output: "insert into vitess_misc set id=1, b=b'00000001', d='2012-01-01', dt='2012-01-01 15:45:45', t='15:45:45', g='\\0\\0\\0\\0\x01\x01\\0\\0\\0\\0\\0\\0\\0\\0\\0\xf0?\\0\\0\\0\\0\\0\\0\\0@'",
+		output: "insert into vitess_misc(id,b,d,dt,t,g) values (1,b'00000001','2012-01-01','2012-01-01 15:45:45','15:45:45','\\0\\0\\0\\0\x01\x01\\0\\0\\0\\0\\0\\0\\0\\0\\0\xf0?\\0\\0\\0\\0\\0\\0\\0@')",
 		table:  "vitess_misc",
 		data: [][]string{
 			{"1", "\x01", "2012-01-01", "2012-01-01 15:45:45", "15:45:45", "\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\x00@"},
 		},
 	}, {
 		input:  "insert into vitess_null values(1, null)",
-		output: "insert into vitess_null set id=1, val=null",
+		output: "insert into vitess_null(id,val) values (1,null)",
 		table:  "vitess_null",
 		data: [][]string{
 			{"1", ""},
 		},
 	}, {
 		input:  "insert into binary_pk values('a', 'aaa')",
-		output: "insert into binary_pk set b='a\\0\\0\\0', val='aaa'",
+		output: "insert into binary_pk(b,val) values ('a\\0\\0\\0','aaa')",
 		table:  "binary_pk",
 		data: [][]string{
 			{"a\x00\x00\x00", "aaa"},
@@ -505,12 +560,12 @@ func TestPlayerTypes(t *testing.T) {
 func TestPlayerDDL(t *testing.T) {
 	defer deleteTablet(addTablet(100, "0", topodatapb.TabletType_REPLICA, true, true))
 	execStatements(t, []string{
-		"create table dummy(id int, primary key(id))",
-		fmt.Sprintf("create table %s.dummy(id int, primary key(id))", vrepldb),
+		"create table t1(id int, primary key(id))",
+		fmt.Sprintf("create table %s.t1(id int, primary key(id))", vrepldb),
 	})
 	defer execStatements(t, []string{
-		"drop table dummy",
-		fmt.Sprintf("drop table %s.dummy", vrepldb),
+		"drop table t1",
+		fmt.Sprintf("drop table %s.t1", vrepldb),
 	})
 	env.SchemaEngine.Reload(context.Background())
 
@@ -525,23 +580,23 @@ func TestPlayerDDL(t *testing.T) {
 	// is a race between the DDLs and the schema loader of vstreamer.
 	// Root cause seems to be with MySQL where t1 shows up in information_schema before
 	// the actual table is created.
-	execStatements(t, []string{"insert into dummy values(1)"})
+	execStatements(t, []string{"insert into t1 values(1)"})
 	expectDBClientQueries(t, []string{
 		"begin",
-		"insert into dummy set id=1",
+		"insert into t1(id) values (1)",
 		"/update _vt.vreplication set pos=",
 		"commit",
 	})
 
-	execStatements(t, []string{"create table t1(id int, primary key(id))"})
-	execStatements(t, []string{"drop table t1"})
-	expectDBClientQueries(t, []string{})
+	execStatements(t, []string{"alter table t1 add column val varchar(128)"})
+	execStatements(t, []string{"alter table t1 drop column val"})
+	expectDBClientQueries(t, []string{"/update _vt.vreplication set pos="})
 	cancel()
 
 	cancel, id := startVReplication(t, filter, binlogdatapb.OnDDLAction_STOP, "")
-	execStatements(t, []string{"create table t1(id int, primary key(id))"})
+	execStatements(t, []string{"alter table t1 add column val varchar(128)"})
 	pos1 := masterPosition(t)
-	execStatements(t, []string{"drop table t1"})
+	execStatements(t, []string{"alter table t1 drop column val"})
 	pos2 := masterPosition(t)
 	// The stop position must be the GTID of the first DDL
 	expectDBClientQueries(t, []string{
@@ -557,6 +612,7 @@ func TestPlayerDDL(t *testing.T) {
 	// It should stop at the next DDL
 	expectDBClientQueries(t, []string{
 		"/update.*'Running'",
+		// Second update is from vreplicator.
 		"/update.*'Running'",
 		"begin",
 		fmt.Sprintf("/update.*'%s'", pos2),
@@ -565,49 +621,39 @@ func TestPlayerDDL(t *testing.T) {
 	})
 	cancel()
 
-	execStatements(t, []string{fmt.Sprintf("create table %s.t2(id int, primary key(id))", vrepldb)})
+	execStatements(t, []string{fmt.Sprintf("alter table %s.t1 add column val2 varchar(128)", vrepldb)})
 	cancel, _ = startVReplication(t, filter, binlogdatapb.OnDDLAction_EXEC, "")
-	execStatements(t, []string{"create table t1(id int, primary key(id))"})
+	execStatements(t, []string{"alter table t1 add column val1 varchar(128)"})
 	expectDBClientQueries(t, []string{
-		"create table t1(id int, primary key(id))",
+		"alter table t1 add column val1 varchar(128)",
 		"/update _vt.vreplication set pos=",
 	})
-	execStatements(t, []string{"create table t2(id int, primary key(id))"})
+	execStatements(t, []string{"alter table t1 add column val2 varchar(128)"})
 	expectDBClientQueries(t, []string{
-		"create table t2(id int, primary key(id))",
-		"/update _vt.vreplication set state='Error'",
+		"alter table t1 add column val2 varchar(128)",
+		"/update _vt.vreplication set message='Duplicate",
 	})
 	cancel()
 
-	// Don't test drop.
-	// MySQL rewrites them by uppercasing, which may be version specific.
 	execStatements(t, []string{
-		"drop table t1",
-		fmt.Sprintf("drop table %s.t1", vrepldb),
-		"drop table t2",
-		fmt.Sprintf("drop table %s.t2", vrepldb),
+		"alter table t1 drop column val1",
+		"alter table t1 drop column val2",
+		fmt.Sprintf("alter table %s.t1 drop column val1", vrepldb),
 	})
 
 	execStatements(t, []string{fmt.Sprintf("create table %s.t2(id int, primary key(id))", vrepldb)})
 	cancel, _ = startVReplication(t, filter, binlogdatapb.OnDDLAction_EXEC_IGNORE, "")
-	execStatements(t, []string{"create table t1(id int, primary key(id))"})
+	execStatements(t, []string{"alter table t1 add column val1 varchar(128)"})
 	expectDBClientQueries(t, []string{
-		"create table t1(id int, primary key(id))",
+		"alter table t1 add column val1 varchar(128)",
 		"/update _vt.vreplication set pos=",
 	})
-	execStatements(t, []string{"create table t2(id int, primary key(id))"})
+	execStatements(t, []string{"alter table t1 add column val2 varchar(128)"})
 	expectDBClientQueries(t, []string{
-		"create table t2(id int, primary key(id))",
+		"alter table t1 add column val2 varchar(128)",
 		"/update _vt.vreplication set pos=",
 	})
 	cancel()
-
-	execStatements(t, []string{
-		"drop table t1",
-		fmt.Sprintf("drop table %s.t1", vrepldb),
-		"drop table t2",
-		fmt.Sprintf("drop table %s.t2", vrepldb),
-	})
 }
 
 func TestPlayerStopPos(t *testing.T) {
@@ -637,7 +683,7 @@ func TestPlayerStopPos(t *testing.T) {
 		OnDdl:    binlogdatapb.OnDDLAction_IGNORE,
 	}
 	startPos := masterPosition(t)
-	query := binlogplayer.CreateVReplicationStopped("test", bls, startPos)
+	query := binlogplayer.CreateVReplicationState("test", bls, startPos, binlogplayer.BlpStopped, vrepldb)
 	qr, err := playerEngine.Exec(query)
 	if err != nil {
 		t.Fatal(err)
@@ -659,10 +705,11 @@ func TestPlayerStopPos(t *testing.T) {
 		t.Fatal(err)
 	}
 	expectDBClientQueries(t, []string{
-		"/update.*'Running'", // done by Engine
-		"/update.*'Running'", // done by vplayer on start
+		"/update.*'Running'",
+		// Second update is from vreplicator.
+		"/update.*'Running'",
 		"begin",
-		"insert into yes set id=1, val='aaa'",
+		"insert into yes(id,val) values (1,'aaa')",
 		fmt.Sprintf("/update.*'%s'", stopPos),
 		"/update.*'Stopped'",
 		"commit",
@@ -682,8 +729,9 @@ func TestPlayerStopPos(t *testing.T) {
 		t.Fatal(err)
 	}
 	expectDBClientQueries(t, []string{
-		"/update.*'Running'", // done by Engine
-		"/update.*'Running'", // done by vplayer on start
+		"/update.*'Running'",
+		// Second update is from vreplicator.
+		"/update.*'Running'",
 		"begin",
 		// Since 'no' generates empty transactions that are skipped by
 		// vplayer, a commit is done only for the stop position event.
@@ -698,8 +746,9 @@ func TestPlayerStopPos(t *testing.T) {
 		t.Fatal(err)
 	}
 	expectDBClientQueries(t, []string{
-		"/update.*'Running'", // done by Engine
-		"/update.*'Running'", // done by vplayer on start
+		"/update.*'Running'",
+		// Second update is from vreplicator.
+		"/update.*'Running'",
 		"/update.*'Stopped'.*already reached",
 	})
 }
@@ -735,7 +784,7 @@ func TestPlayerIdleUpdate(t *testing.T) {
 	start := time.Now()
 	expectDBClientQueries(t, []string{
 		"begin",
-		"insert into t1 set id=1, val='aaa'",
+		"insert into t1(id,val) values (1,'aaa')",
 		"/update _vt.vreplication set pos=",
 		"commit",
 	})
@@ -747,7 +796,7 @@ func TestPlayerIdleUpdate(t *testing.T) {
 	expectDBClientQueries(t, []string{
 		"/update _vt.vreplication set pos=",
 	})
-	if duration := time.Now().Sub(start); duration < idleTimeout {
+	if duration := time.Since(start); duration < idleTimeout {
 		t.Errorf("duration: %v, must be at least %v", duration, idleTimeout)
 	}
 }
@@ -785,8 +834,8 @@ func TestPlayerSplitTransaction(t *testing.T) {
 	// but still combined as one transaction.
 	expectDBClientQueries(t, []string{
 		"begin",
-		"insert into t1 set id=1, val='123456'",
-		"insert into t1 set id=2, val='789012'",
+		"insert into t1(id,val) values (1,'123456')",
+		"insert into t1(id,val) values (2,'789012')",
 		"/update _vt.vreplication set pos=",
 		"commit",
 	})
@@ -821,8 +870,8 @@ func TestPlayerLockErrors(t *testing.T) {
 	})
 	expectDBClientQueries(t, []string{
 		"begin",
-		"insert into t1 set id=1, val='aaa'",
-		"insert into t1 set id=2, val='bbb'",
+		"insert into t1(id,val) values (1,'aaa')",
+		"insert into t1(id,val) values (2,'bbb')",
 		"/update _vt.vreplication set pos=",
 		"commit",
 	})
@@ -894,7 +943,7 @@ func TestPlayerCancelOnLock(t *testing.T) {
 	})
 	expectDBClientQueries(t, []string{
 		"begin",
-		"insert into t1 set id=1, val='aaa'",
+		"insert into t1(id,val) values (1,'aaa')",
 		"/update _vt.vreplication set pos=",
 		"commit",
 	})
@@ -964,7 +1013,7 @@ func TestPlayerBatching(t *testing.T) {
 	})
 	expectDBClientQueries(t, []string{
 		"begin",
-		"insert into t1 set id=1, val='aaa'",
+		"insert into t1(id,val) values (1,'aaa')",
 		"/update _vt.vreplication set pos=",
 		"commit",
 	})
@@ -996,8 +1045,8 @@ func TestPlayerBatching(t *testing.T) {
 	execStatements(t, []string{
 		"insert into t1 values(2, 'aaa')",
 		"insert into t1 values(3, 'aaa')",
-		"create table t2(id int, val varbinary(128), primary key(id))",
-		"drop table t2",
+		"alter table t1 add column val2 varbinary(128)",
+		"alter table t1 drop column val2",
 	})
 
 	// Release the lock.
@@ -1010,13 +1059,13 @@ func TestPlayerBatching(t *testing.T) {
 		"/update _vt.vreplication set pos=",
 		"commit",
 		"begin",
-		"insert into t1 set id=2, val='aaa'",
-		"insert into t1 set id=3, val='aaa'",
+		"insert into t1(id,val) values (2,'aaa')",
+		"insert into t1(id,val) values (3,'aaa')",
 		"/update _vt.vreplication set pos=",
 		"commit",
-		"create table t2(id int, val varbinary(128), primary key(id))",
+		"alter table t1 add column val2 varbinary(128)",
 		"/update _vt.vreplication set pos=",
-		"/", // drop table is rewritten by mysql. Don't check.
+		"alter table t1 drop column val2",
 		"/update _vt.vreplication set pos=",
 	})
 }
@@ -1061,7 +1110,7 @@ func TestPlayerRelayLogMaxSize(t *testing.T) {
 			})
 			expectDBClientQueries(t, []string{
 				"begin",
-				"insert into t1 set id=1, val='123456'",
+				"insert into t1(id,val) values (1,'123456')",
 				"/update _vt.vreplication set pos=",
 				"commit",
 			})
@@ -1107,12 +1156,12 @@ func TestPlayerRelayLogMaxSize(t *testing.T) {
 				"/update _vt.vreplication set pos=",
 				"commit",
 				"begin",
-				"insert into t1 set id=2, val='789012'",
-				"insert into t1 set id=3, val='345678'",
+				"insert into t1(id,val) values (2,'789012')",
+				"insert into t1(id,val) values (3,'345678')",
 				"/update _vt.vreplication set pos=",
 				"commit",
 				"begin",
-				"insert into t1 set id=4, val='901234'",
+				"insert into t1(id,val) values (4,'901234')",
 				"/update _vt.vreplication set pos=",
 				"commit",
 			})
@@ -1150,14 +1199,14 @@ func TestRestartOnVStreamEnd(t *testing.T) {
 	})
 	expectDBClientQueries(t, []string{
 		"begin",
-		"insert into t1 set id=1, val='aaa'",
+		"insert into t1(id,val) values (1,'aaa')",
 		"/update _vt.vreplication set pos=",
 		"commit",
 	})
 
 	streamerEngine.Close()
 	expectDBClientQueries(t, []string{
-		"/update.*'Error'.*vstream ended",
+		"/update _vt.vreplication set message='vstream ended'",
 	})
 	if err := streamerEngine.Open(env.KeyspaceName, env.ShardName); err != nil {
 		t.Fatal(err)
@@ -1167,9 +1216,9 @@ func TestRestartOnVStreamEnd(t *testing.T) {
 		"insert into t1 values(2, 'aaa')",
 	})
 	expectDBClientQueries(t, []string{
-		"/update.*'Running'",
+		"/update _vt.vreplication set state='Running'",
 		"begin",
-		"insert into t1 set id=2, val='aaa'",
+		"insert into t1(id,val) values (2,'aaa')",
 		"/update _vt.vreplication set pos=",
 		"commit",
 	})
@@ -1210,7 +1259,7 @@ func TestTimestamp(t *testing.T) {
 		"begin",
 		// The insert value for ts will be in UTC.
 		// We'll check the row instead.
-		"/insert into t1 set id=",
+		"/insert into t1",
 		"/update _vt.vreplication set pos=",
 		"commit",
 	})
@@ -1237,17 +1286,15 @@ func startVReplication(t *testing.T, filter *binlogdatapb.Filter, onddl binlogda
 	if pos == "" {
 		pos = masterPosition(t)
 	}
-	query := binlogplayer.CreateVReplication("test", bls, pos, 9223372036854775807, 9223372036854775807, 0)
+	query := binlogplayer.CreateVReplication("test", bls, pos, 9223372036854775807, 9223372036854775807, 0, vrepldb)
 	qr, err := playerEngine.Exec(query)
 	if err != nil {
 		t.Fatal(err)
 	}
-	// Eat all the initialization queries
-	for q := range globalDBQueries {
-		if strings.HasPrefix(q, "update") {
-			break
-		}
-	}
+	expectDBClientQueries(t, []string{
+		"/insert into _vt.vreplication",
+		"/update _vt.vreplication set state='Running'",
+	})
 	return func() {
 		t.Helper()
 		query := fmt.Sprintf("delete from _vt.vreplication where id = %d", qr.InsertID)

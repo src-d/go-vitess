@@ -1107,7 +1107,7 @@ var (
 		output: "show create procedure",
 	}, {
 		input:  "show create table t",
-		output: "show create table",
+		output: "show create table t",
 	}, {
 		input:  "show create trigger t",
 		output: "show create trigger",
@@ -1120,6 +1120,9 @@ var (
 	}, {
 		input:  "show databases",
 		output: "show databases",
+	}, {
+		input:  "show schemas",
+		output: "show schemas",
 	}, {
 		input:  "show engine INNODB",
 		output: "show engine",
@@ -2066,12 +2069,12 @@ func TestCreateTable(t *testing.T) {
 	}
 
 	sql := "create table t garbage"
-	tree, err := Parse(sql)
+	_, err := Parse(sql)
 	if err != nil {
 		t.Errorf("input: %s, err: %v", sql, err)
 	}
 
-	tree, err = ParseStrictDDL(sql)
+	tree, err := ParseStrictDDL(sql)
 	if tree != nil || err == nil {
 		t.Errorf("ParseStrictDDL unexpectedly accepted input %s", sql)
 	}

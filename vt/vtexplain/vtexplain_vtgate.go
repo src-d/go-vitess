@@ -23,6 +23,7 @@ import (
 	"fmt"
 
 	"golang.org/x/net/context"
+	"gopkg.in/src-d/go-vitess.v1/vt/vterrors"
 
 	"gopkg.in/src-d/go-vitess.v1/json2"
 	"gopkg.in/src-d/go-vitess.v1/vt/discovery"
@@ -137,7 +138,7 @@ func vtgateExecute(sql string) ([]*engine.Plan, map[string]*TabletActions, error
 		}
 		planCache.Clear()
 
-		return nil, nil, fmt.Errorf("vtexplain execute error in '%s': %v", sql, err)
+		return nil, nil, vterrors.Wrapf(err, "vtexplain execute error in '%s'", sql)
 	}
 
 	var plans []*engine.Plan

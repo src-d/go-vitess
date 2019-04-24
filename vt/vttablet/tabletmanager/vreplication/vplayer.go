@@ -23,130 +23,109 @@ import (
 	"time"
 
 	"golang.org/x/net/context"
-
 	"gopkg.in/src-d/go-vitess.v1/mysql"
 	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+
 	"gopkg.in/src-d/go-vitess.v1/vt/binlog/binlogplayer"
 	"gopkg.in/src-d/go-vitess.v1/vt/grpcclient"
 	"gopkg.in/src-d/go-vitess.v1/vt/log"
-	"gopkg.in/src-d/go-vitess.v1/vt/mysqlctl"
-	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
 	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletconn"
 
 	binlogdatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/binlogdata"
 	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
-	topodatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/topodata"
-)
-
-var (
-	idleTimeout      = 1 * time.Second
-	dbLockRetryDelay = 1 * time.Second
-	relayLogMaxSize  = 10000
-	relayLogMaxItems = 1000
 )
 
 type vplayer struct {
-	id           uint32
-	source       *binlogdatapb.BinlogSource
-	sourceTablet *topodatapb.Tablet
-	stats        *binlogplayer.Stats
-	dbClient     *retryableClient
-	// mysqld is used to fetch the local schema.
-	mysqld mysqlctl.MysqlDaemon
+	vr        *vreplicator
+	startPos  mysql.Position
+	stopPos   mysql.Position
+	saveStop  bool
+	copyState map[string]*sqltypes.Result
+
+	replicatorPlan *ReplicatorPlan
+	tablePlans     map[string]*TablePlan
 
 	pos mysql.Position
-	// unsavedGTID when we receive a GTID event and reset
-	// if it gets saved. If Fetch returns on idleTimeout,
-	// we save the last unsavedGTID.
-	unsavedGTID *binlogdatapb.VEvent
+	// unsavedEvent is saved any time we skip an event without
+	// saving: This can be an empty commit or a skipped DDL.
+	unsavedEvent *binlogdatapb.VEvent
 	// timeLastSaved is set every time a GTID is saved.
 	timeLastSaved time.Time
-	stopPos       mysql.Position
-
-	// pplan is built based on the source Filter at the beginning.
-	pplan *PlayerPlan
-	// tplans[table] is built for each table based on pplan and schema info
-	// about the table.
-	tplans map[string]*TablePlan
+	// lastTimestampNs is the last timestamp seen so far.
+	lastTimestampNs int64
+	// timeOffsetNs keeps track of the clock difference with respect to source tablet.
+	timeOffsetNs int64
 }
 
-func newVPlayer(id uint32, source *binlogdatapb.BinlogSource, sourceTablet *topodatapb.Tablet, stats *binlogplayer.Stats, dbClient binlogplayer.DBClient, mysqld mysqlctl.MysqlDaemon) *vplayer {
+func newVPlayer(vr *vreplicator, settings binlogplayer.VRSettings, copyState map[string]*sqltypes.Result, pausePos mysql.Position) *vplayer {
+	saveStop := true
+	if !pausePos.IsZero() {
+		settings.StopPos = pausePos
+		saveStop = false
+	}
 	return &vplayer{
-		id:            id,
-		source:        source,
-		sourceTablet:  sourceTablet,
-		stats:         stats,
-		dbClient:      &retryableClient{DBClient: dbClient},
-		mysqld:        mysqld,
+		vr:            vr,
+		startPos:      settings.StartPos,
+		pos:           settings.StartPos,
+		stopPos:       settings.StopPos,
+		saveStop:      saveStop,
+		copyState:     copyState,
 		timeLastSaved: time.Now(),
-		tplans:        make(map[string]*TablePlan),
+		tablePlans:    make(map[string]*TablePlan),
 	}
 }
 
-func (vp *vplayer) Play(ctx context.Context) error {
-	if err := vp.setState(binlogplayer.BlpRunning, ""); err != nil {
+// play is not resumable. If pausePos is set, play returns without updating the vreplication state.
+func (vp *vplayer) play(ctx context.Context) error {
+	if !vp.stopPos.IsZero() && vp.startPos.AtLeast(vp.stopPos) {
+		if vp.saveStop {
+			return vp.vr.setState(binlogplayer.BlpStopped, fmt.Sprintf("Stop position %v already reached: %v", vp.startPos, vp.stopPos))
+		}
+		return nil
+	}
+
+	plan, err := buildReplicatorPlan(vp.vr.source.Filter, vp.vr.tableKeys, vp.copyState)
+	if err != nil {
 		return err
 	}
-	if err := vp.play(ctx); err != nil {
+	vp.replicatorPlan = plan
+
+	if err := vp.fetchAndApply(ctx); err != nil {
 		msg := err.Error()
-		vp.stats.History.Add(&binlogplayer.StatsHistoryRecord{
+		vp.vr.stats.History.Add(&binlogplayer.StatsHistoryRecord{
 			Time:    time.Now(),
 			Message: msg,
 		})
-		if err := vp.setState(binlogplayer.BlpError, msg); err != nil {
-			return err
+		if err := vp.vr.setMessage(msg); err != nil {
+			log.Errorf("Failed to set error state: %v", err)
 		}
 		return err
 	}
 	return nil
 }
 
-func (vp *vplayer) play(ctx context.Context) error {
-	startPos, stopPos, _, _, err := binlogplayer.ReadVRSettings(vp.dbClient, vp.id)
-	if err != nil {
-		return vp.setState(binlogplayer.BlpStopped, fmt.Sprintf("error reading VReplication settings: %v", err))
-	}
-	vp.pos, err = mysql.DecodePosition(startPos)
-	if err != nil {
-		return vp.setState(binlogplayer.BlpStopped, fmt.Sprintf("error decoding start position %v: %v", startPos, err))
-	}
-	if stopPos != "" {
-		vp.stopPos, err = mysql.DecodePosition(stopPos)
-		if err != nil {
-			return vp.setState(binlogplayer.BlpStopped, fmt.Sprintf("error decoding stop position %v: %v", stopPos, err))
-		}
-	}
-	if !vp.stopPos.IsZero() {
-		if vp.pos.AtLeast(vp.stopPos) {
-			return vp.setState(binlogplayer.BlpStopped, fmt.Sprintf("Stop position %v already reached: %v", vp.pos, vp.stopPos))
-		}
-	}
-	log.Infof("Starting VReplication player id: %v, startPos: %v, stop: %v, source: %v, filter: %v", vp.id, startPos, vp.stopPos, vp.sourceTablet, vp.source)
+func (vp *vplayer) fetchAndApply(ctx context.Context) error {
+	log.Infof("Starting VReplication player id: %v, startPos: %v, stop: %v, source: %v, filter: %v", vp.vr.id, vp.startPos, vp.stopPos, vp.vr.sourceTablet, vp.vr.source)
 
-	plan, err := buildPlayerPlan(vp.source.Filter)
-	if err != nil {
-		return err
-	}
-	vp.pplan = plan
-
-	vsClient, err := tabletconn.GetDialer()(vp.sourceTablet, grpcclient.FailFast(false))
+	vsClient, err := tabletconn.GetDialer()(vp.vr.sourceTablet, grpcclient.FailFast(false))
 	if err != nil {
 		return fmt.Errorf("error dialing tablet: %v", err)
 	}
+	defer vsClient.Close(ctx)
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	relay := newRelayLog(ctx, relayLogMaxItems, relayLogMaxSize)
 
 	target := &querypb.Target{
-		Keyspace:   vp.sourceTablet.Keyspace,
-		Shard:      vp.sourceTablet.Shard,
-		TabletType: vp.sourceTablet.Type,
+		Keyspace:   vp.vr.sourceTablet.Keyspace,
+		Shard:      vp.vr.sourceTablet.Shard,
+		TabletType: vp.vr.sourceTablet.Type,
 	}
-	log.Infof("Sending vstream command: %v", plan.VStreamFilter)
+	log.Infof("Sending vstream command: %v", vp.replicatorPlan.VStreamFilter)
 	streamErr := make(chan error, 1)
 	go func() {
-		streamErr <- vsClient.VStream(ctx, target, startPos, plan.VStreamFilter, func(events []*binlogdatapb.VEvent) error {
+		streamErr <- vsClient.VStream(ctx, target, mysql.EncodePosition(vp.startPos), vp.replicatorPlan.VStreamFilter, func(events []*binlogdatapb.VEvent) error {
 			return relay.Send(events)
 		})
 	}()
@@ -191,11 +170,80 @@ func (vp *vplayer) play(ctx context.Context) error {
 	}
 }
 
+func (vp *vplayer) applyRowEvent(ctx context.Context, rowEvent *binlogdatapb.RowEvent) error {
+	tplan := vp.tablePlans[rowEvent.TableName]
+	if tplan == nil {
+		return fmt.Errorf("unexpected event on table %s", rowEvent.TableName)
+	}
+	for _, change := range rowEvent.RowChanges {
+		queries, err := tplan.generateStatements(change)
+		if err != nil {
+			return err
+		}
+		for _, query := range queries {
+			if err := vp.exec(ctx, query); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (vp *vplayer) updatePos(ts int64) (posReached bool, err error) {
+	update := binlogplayer.GenerateUpdatePos(vp.vr.id, vp.pos, time.Now().Unix(), ts)
+	if _, err := vp.vr.dbClient.ExecuteFetch(update, 0); err != nil {
+		vp.vr.dbClient.Rollback()
+		return false, fmt.Errorf("error %v updating position", err)
+	}
+	vp.unsavedEvent = nil
+	vp.timeLastSaved = time.Now()
+	vp.vr.stats.SetLastPosition(vp.pos)
+	posReached = !vp.stopPos.IsZero() && vp.pos.Equal(vp.stopPos)
+	if posReached {
+		if vp.saveStop {
+			if err := vp.vr.setState(binlogplayer.BlpStopped, fmt.Sprintf("Stopped at position %v", vp.stopPos)); err != nil {
+				return false, err
+			}
+		}
+	}
+	return posReached, nil
+}
+
+func (vp *vplayer) exec(ctx context.Context, sql string) error {
+	vp.vr.stats.Timings.Record("query", time.Now())
+	_, err := vp.vr.dbClient.ExecuteFetch(sql, 0)
+	for err != nil {
+		if sqlErr, ok := err.(*mysql.SQLError); ok && sqlErr.Number() == mysql.ERLockDeadlock || sqlErr.Number() == mysql.ERLockWaitTimeout {
+			log.Infof("retryable error: %v, waiting for %v and retrying", sqlErr, dbLockRetryDelay)
+			if err := vp.vr.dbClient.Rollback(); err != nil {
+				return err
+			}
+			time.Sleep(dbLockRetryDelay)
+			// Check context here. Otherwise this can become an infinite loop.
+			select {
+			case <-ctx.Done():
+				return io.EOF
+			default:
+			}
+			err = vp.vr.dbClient.Retry()
+			continue
+		}
+		return err
+	}
+	return nil
+}
+
 func (vp *vplayer) applyEvents(ctx context.Context, relay *relayLog) error {
 	for {
 		items, err := relay.Fetch()
 		if err != nil {
 			return err
+		}
+		// No events were received. This likely means that there's a network partition.
+		// So, we should assume we're falling behind.
+		if len(items) == 0 {
+			behind := time.Now().UnixNano() - vp.lastTimestampNs - vp.timeOffsetNs
+			vp.vr.stats.SecondsBehindMaster.Set(behind / 1e9)
 		}
 		// Filtered replication often ends up receiving a large number of empty transactions.
 		// This is required because the player needs to know the latest position of the source.
@@ -210,17 +258,23 @@ func (vp *vplayer) applyEvents(ctx context.Context, relay *relayLog) error {
 		// 1. Fetch was idle for idleTimeout.
 		// 2. We've been receiving empty events for longer than idleTimeout.
 		// In both cases, now > timeLastSaved. If so, any unsaved GTID should be saved.
-		if time.Now().Sub(vp.timeLastSaved) >= idleTimeout && vp.unsavedGTID != nil {
-			// Although unlikely, we should not save if a transaction is still open.
-			// This can happen if a large transaction is split as multiple events.
-			if !vp.dbClient.InTransaction {
-				if err := vp.updatePos(vp.unsavedGTID.Timestamp); err != nil {
-					return err
-				}
+		if time.Since(vp.timeLastSaved) >= idleTimeout && vp.unsavedEvent != nil {
+			posReached, err := vp.updatePos(vp.unsavedEvent.Timestamp)
+			if err != nil {
+				return err
+			}
+			if posReached {
+				// Unreachable.
+				return nil
 			}
 		}
 		for i, events := range items {
 			for j, event := range events {
+				if event.Timestamp != 0 {
+					vp.lastTimestampNs = event.Timestamp * 1e9
+					vp.timeOffsetNs = time.Now().UnixNano() - event.CurrentTime
+					vp.vr.stats.SecondsBehindMaster.Set(event.CurrentTime/1e9 - event.Timestamp)
+				}
 				mustSave := false
 				switch event.Type {
 				case binlogdatapb.VEventType_COMMIT:
@@ -266,14 +320,17 @@ func (vp *vplayer) applyEvent(ctx context.Context, event *binlogdatapb.VEvent, m
 			return err
 		}
 		vp.pos = pos
-		vp.unsavedGTID = event
+		// A new position should not be saved until a commit or DDL.
+		vp.unsavedEvent = nil
 		if vp.stopPos.IsZero() {
 			return nil
 		}
 		if !vp.pos.Equal(vp.stopPos) && vp.pos.AtLeast(vp.stopPos) {
 			// Code is unreachable, but bad data can cause this to happen.
-			if err := vp.setState(binlogplayer.BlpStopped, fmt.Sprintf("next event position %v exceeds stop pos %v, exiting without applying", vp.pos, vp.stopPos)); err != nil {
-				return err
+			if vp.saveStop {
+				if err := vp.vr.setState(binlogplayer.BlpStopped, fmt.Sprintf("next event position %v exceeds stop pos %v, exiting without applying", vp.pos, vp.stopPos)); err != nil {
+					return err
+				}
 			}
 			return io.EOF
 		}
@@ -281,61 +338,67 @@ func (vp *vplayer) applyEvent(ctx context.Context, event *binlogdatapb.VEvent, m
 		// No-op: begin is called as needed.
 	case binlogdatapb.VEventType_COMMIT:
 		if mustSave {
-			if err := vp.dbClient.Begin(); err != nil {
+			if err := vp.vr.dbClient.Begin(); err != nil {
 				return err
 			}
 		}
 
-		if !vp.dbClient.InTransaction {
+		if !vp.vr.dbClient.InTransaction {
+			// We're skipping an empty transaction. We may have to save the position on inactivity.
+			vp.unsavedEvent = event
 			return nil
 		}
-		if err := vp.updatePos(event.Timestamp); err != nil {
+		posReached, err := vp.updatePos(event.Timestamp)
+		if err != nil {
 			return err
 		}
-		posReached := !vp.stopPos.IsZero() && vp.pos.Equal(vp.stopPos)
-		if posReached {
-			if err := vp.setState(binlogplayer.BlpStopped, fmt.Sprintf("Stopped at position %v", vp.stopPos)); err != nil {
-				return err
-			}
-		}
-		if err := vp.dbClient.Commit(); err != nil {
+		if err := vp.vr.dbClient.Commit(); err != nil {
 			return err
 		}
 		if posReached {
 			return io.EOF
 		}
 	case binlogdatapb.VEventType_FIELD:
-		if err := vp.dbClient.Begin(); err != nil {
+		if err := vp.vr.dbClient.Begin(); err != nil {
 			return err
 		}
-		if err := vp.updatePlan(event.FieldEvent); err != nil {
+		tplan, err := vp.replicatorPlan.buildExecutionPlan(event.FieldEvent)
+		if err != nil {
 			return err
 		}
+		vp.tablePlans[event.FieldEvent.TableName] = tplan
 	case binlogdatapb.VEventType_ROW:
-		if err := vp.dbClient.Begin(); err != nil {
+		if err := vp.vr.dbClient.Begin(); err != nil {
 			return err
 		}
 		if err := vp.applyRowEvent(ctx, event.RowEvent); err != nil {
 			return err
 		}
 	case binlogdatapb.VEventType_DDL:
-		if vp.dbClient.InTransaction {
+		if vp.vr.dbClient.InTransaction {
 			return fmt.Errorf("unexpected state: DDL encountered in the middle of a transaction: %v", event.Ddl)
 		}
-		switch vp.source.OnDdl {
+		switch vp.vr.source.OnDdl {
 		case binlogdatapb.OnDDLAction_IGNORE:
-			// no-op
+			// We still have to update the position.
+			posReached, err := vp.updatePos(event.Timestamp)
+			if err != nil {
+				return err
+			}
+			if posReached {
+				return io.EOF
+			}
 		case binlogdatapb.OnDDLAction_STOP:
-			if err := vp.dbClient.Begin(); err != nil {
+			if err := vp.vr.dbClient.Begin(); err != nil {
 				return err
 			}
-			if err := vp.updatePos(event.Timestamp); err != nil {
+			if _, err := vp.updatePos(event.Timestamp); err != nil {
 				return err
 			}
-			if err := vp.setState(binlogplayer.BlpStopped, fmt.Sprintf("Stopped at DDL %s", event.Ddl)); err != nil {
+			if err := vp.vr.setState(binlogplayer.BlpStopped, fmt.Sprintf("Stopped at DDL %s", event.Ddl)); err != nil {
 				return err
 			}
-			if err := vp.dbClient.Commit(); err != nil {
+			if err := vp.vr.dbClient.Commit(); err != nil {
 				return err
 			}
 			return io.EOF
@@ -343,299 +406,27 @@ func (vp *vplayer) applyEvent(ctx context.Context, event *binlogdatapb.VEvent, m
 			if err := vp.exec(ctx, event.Ddl); err != nil {
 				return err
 			}
-			if err := vp.updatePos(event.Timestamp); err != nil {
+			posReached, err := vp.updatePos(event.Timestamp)
+			if err != nil {
 				return err
+			}
+			if posReached {
+				return io.EOF
 			}
 		case binlogdatapb.OnDDLAction_EXEC_IGNORE:
 			if err := vp.exec(ctx, event.Ddl); err != nil {
 				log.Infof("Ignoring error: %v for DDL: %s", err, event.Ddl)
 			}
-			if err := vp.updatePos(event.Timestamp); err != nil {
+			posReached, err := vp.updatePos(event.Timestamp)
+			if err != nil {
 				return err
 			}
-		}
-	}
-	return nil
-}
-
-func (vp *vplayer) setState(state, message string) error {
-	return binlogplayer.SetVReplicationState(vp.dbClient, vp.id, state, message)
-}
-
-func (vp *vplayer) updatePlan(fieldEvent *binlogdatapb.FieldEvent) error {
-	prelim := vp.pplan.TablePlans[fieldEvent.TableName]
-	tplan := &TablePlan{
-		Name: fieldEvent.TableName,
-	}
-	if prelim != nil {
-		*tplan = *prelim
-	}
-	tplan.Fields = fieldEvent.Fields
-
-	if tplan.ColExprs == nil {
-		tplan.ColExprs = make([]*ColExpr, len(tplan.Fields))
-		for i, field := range tplan.Fields {
-			tplan.ColExprs[i] = &ColExpr{
-				ColName: sqlparser.NewColIdent(field.Name),
-				ColNum:  i,
-			}
-		}
-	} else {
-		for _, cExpr := range tplan.ColExprs {
-			if cExpr.ColNum >= len(tplan.Fields) {
-				// Unreachable code.
-				return fmt.Errorf("columns received from vreplication: %v, do not match expected: %v", tplan.Fields, tplan.ColExprs)
-			}
-		}
-	}
-
-	pkcols, err := vp.mysqld.GetPrimaryKeyColumns(vp.dbClient.DBName(), tplan.Name)
-	if err != nil {
-		return fmt.Errorf("error fetching pk columns for %s: %v", tplan.Name, err)
-	}
-	if len(pkcols) == 0 {
-		// If the table doesn't have a PK, then we treat all columns as PK.
-		pkcols, err = vp.mysqld.GetColumns(vp.dbClient.DBName(), tplan.Name)
-		if err != nil {
-			return fmt.Errorf("error fetching pk columns for %s: %v", tplan.Name, err)
-		}
-	}
-	for _, pkcol := range pkcols {
-		found := false
-		for i, cExpr := range tplan.ColExprs {
-			if cExpr.ColName.EqualString(pkcol) {
-				found = true
-				tplan.PKCols = append(tplan.PKCols, &ColExpr{
-					ColName: cExpr.ColName,
-					ColNum:  i,
-				})
-				break
-			}
-		}
-		if !found {
-			return fmt.Errorf("primary key column %s missing from select list for table %s", pkcol, tplan.Name)
-		}
-	}
-	vp.tplans[fieldEvent.TableName] = tplan
-	return nil
-}
-
-func (vp *vplayer) applyRowEvent(ctx context.Context, rowEvent *binlogdatapb.RowEvent) error {
-	tplan := vp.tplans[rowEvent.TableName]
-	if tplan == nil {
-		return fmt.Errorf("unexpected event on table %s", rowEvent.TableName)
-	}
-	for _, change := range rowEvent.RowChanges {
-		if err := vp.applyRowChange(ctx, tplan, change); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (vp *vplayer) applyRowChange(ctx context.Context, tplan *TablePlan, rowChange *binlogdatapb.RowChange) error {
-	// MakeRowTrusted is needed here because because Proto3ToResult is not convenient.
-	var before, after []sqltypes.Value
-	if rowChange.Before != nil {
-		before = sqltypes.MakeRowTrusted(tplan.Fields, rowChange.Before)
-	}
-	if rowChange.After != nil {
-		after = sqltypes.MakeRowTrusted(tplan.Fields, rowChange.After)
-	}
-	var query string
-	switch {
-	case before == nil && after != nil:
-		query = vp.generateInsert(tplan, after)
-	case before != nil && after != nil:
-		query = vp.generateUpdate(tplan, before, after)
-	case before != nil && after == nil:
-		query = vp.generateDelete(tplan, before)
-	case before == nil && after == nil:
-		// unreachable
-	}
-	if query == "" {
-		return nil
-	}
-	return vp.exec(ctx, query)
-}
-
-func (vp *vplayer) generateInsert(tplan *TablePlan, after []sqltypes.Value) string {
-	sql := sqlparser.NewTrackedBuffer(nil)
-	if tplan.OnInsert == InsertIgnore {
-		sql.Myprintf("insert ignore into %v set ", sqlparser.NewTableIdent(tplan.Name))
-	} else {
-		sql.Myprintf("insert into %v set ", sqlparser.NewTableIdent(tplan.Name))
-	}
-	vp.writeInsertValues(sql, tplan, after)
-	if tplan.OnInsert == InsertOndup {
-		sql.Myprintf(" on duplicate key update ")
-		_ = vp.writeUpdateValues(sql, tplan, nil, after)
-	}
-	return sql.String()
-}
-
-func (vp *vplayer) generateUpdate(tplan *TablePlan, before, after []sqltypes.Value) string {
-	if tplan.OnInsert == InsertIgnore {
-		return vp.generateInsert(tplan, after)
-	}
-	sql := sqlparser.NewTrackedBuffer(nil)
-	sql.Myprintf("update %v set ", sqlparser.NewTableIdent(tplan.Name))
-	if ok := vp.writeUpdateValues(sql, tplan, before, after); !ok {
-		return ""
-	}
-	sql.Myprintf(" where ")
-	vp.writeWhereValues(sql, tplan, before)
-	return sql.String()
-}
-
-func (vp *vplayer) generateDelete(tplan *TablePlan, before []sqltypes.Value) string {
-	sql := sqlparser.NewTrackedBuffer(nil)
-	switch tplan.OnInsert {
-	case InsertOndup:
-		return vp.generateUpdate(tplan, before, nil)
-	case InsertIgnore:
-		return ""
-	default: // insertNormal
-		sql.Myprintf("delete from %v where ", sqlparser.NewTableIdent(tplan.Name))
-		vp.writeWhereValues(sql, tplan, before)
-	}
-	return sql.String()
-}
-
-func (vp *vplayer) writeInsertValues(sql *sqlparser.TrackedBuffer, tplan *TablePlan, after []sqltypes.Value) {
-	separator := ""
-	for _, cExpr := range tplan.ColExprs {
-		sql.Myprintf("%s%v=", separator, cExpr.ColName)
-		separator = ", "
-		if cExpr.Operation == OpCount {
-			sql.WriteString("1")
-		} else {
-			if cExpr.Operation == OpSum && after[cExpr.ColNum].IsNull() {
-				sql.WriteString("0")
-			} else {
-				encodeValue(sql, after[cExpr.ColNum])
-			}
-		}
-	}
-}
-
-// writeUpdateValues returns true if at least one value was set. Otherwise, it returns false.
-func (vp *vplayer) writeUpdateValues(sql *sqlparser.TrackedBuffer, tplan *TablePlan, before, after []sqltypes.Value) bool {
-	separator := ""
-	hasSet := false
-	for _, cExpr := range tplan.ColExprs {
-		if cExpr.IsGrouped {
-			continue
-		}
-		if len(before) != 0 && len(after) != 0 {
-			if cExpr.Operation == OpCount {
-				continue
-			}
-			bef := before[cExpr.ColNum]
-			aft := after[cExpr.ColNum]
-			// If both are null, there's no change
-			if bef.IsNull() && aft.IsNull() {
-				continue
-			}
-			// If any one of them is null, something has changed.
-			if bef.IsNull() || aft.IsNull() {
-				goto mustSet
-			}
-			// Compare content only if none are null.
-			if bef.ToString() == aft.ToString() {
-				continue
-			}
-		}
-	mustSet:
-		sql.Myprintf("%s%v=", separator, cExpr.ColName)
-		separator = ", "
-		hasSet = true
-		if cExpr.Operation == OpCount || cExpr.Operation == OpSum {
-			sql.Myprintf("%v", cExpr.ColName)
-		}
-		if len(before) != 0 {
-			switch cExpr.Operation {
-			case OpNone:
-				if len(after) == 0 {
-					sql.WriteString("NULL")
-				}
-			case OpCount:
-				sql.WriteString("-1")
-			case OpSum:
-				if !before[cExpr.ColNum].IsNull() {
-					sql.WriteString("-")
-					encodeValue(sql, before[cExpr.ColNum])
-				}
-			}
-		}
-		if len(after) != 0 {
-			switch cExpr.Operation {
-			case OpNone:
-				encodeValue(sql, after[cExpr.ColNum])
-			case OpCount:
-				sql.WriteString("+1")
-			case OpSum:
-				if !after[cExpr.ColNum].IsNull() {
-					sql.WriteString("+")
-					encodeValue(sql, after[cExpr.ColNum])
-				}
-			}
-		}
-	}
-	return hasSet
-}
-
-func (vp *vplayer) writeWhereValues(sql *sqlparser.TrackedBuffer, tplan *TablePlan, before []sqltypes.Value) {
-	separator := ""
-	for _, cExpr := range tplan.PKCols {
-		sql.Myprintf("%s%v=", separator, cExpr.ColName)
-		separator = " and "
-		encodeValue(sql, before[cExpr.ColNum])
-	}
-}
-
-func (vp *vplayer) updatePos(ts int64) error {
-	updatePos := binlogplayer.GenerateUpdatePos(vp.id, vp.pos, time.Now().Unix(), ts)
-	if _, err := vp.dbClient.ExecuteFetch(updatePos, 0); err != nil {
-		vp.dbClient.Rollback()
-		return fmt.Errorf("error %v updating position", err)
-	}
-	vp.unsavedGTID = nil
-	vp.timeLastSaved = time.Now()
-	return nil
-}
-
-func (vp *vplayer) exec(ctx context.Context, sql string) error {
-	vp.stats.Timings.Record("query", time.Now())
-	_, err := vp.dbClient.ExecuteFetch(sql, 0)
-	for err != nil {
-		// 1213: deadlock, 1205: lock wait timeout
-		if sqlErr, ok := err.(*mysql.SQLError); ok && sqlErr.Number() == 1213 || sqlErr.Number() == 1205 {
-			log.Infof("retryable error: %v, waiting for %v and retrying", sqlErr, dbLockRetryDelay)
-			if err := vp.dbClient.Rollback(); err != nil {
-				return err
-			}
-			time.Sleep(dbLockRetryDelay)
-			// Check context here. Otherwise this can become an infinite loop.
-			select {
-			case <-ctx.Done():
+			if posReached {
 				return io.EOF
-			default:
 			}
-			err = vp.dbClient.Retry()
-			continue
 		}
-		return err
+	case binlogdatapb.VEventType_HEARTBEAT:
+		// No-op: heartbeat timings are calculated in outer loop.
 	}
 	return nil
-}
-
-func encodeValue(sql *sqlparser.TrackedBuffer, value sqltypes.Value) {
-	// This is currently a separate function because special handling
-	// may be needed for certain types.
-	// Previously, this function used to convert timestamp to the session
-	// time zone, but we now set the session timezone to UTC. So, the timestamp
-	// value we receive as UTC can be sent as is.
-	// TODO(sougou): handle BIT data type here?
-	value.EncodeSQL(sql)
 }

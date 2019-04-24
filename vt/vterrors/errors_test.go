@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"golang.org/x/net/context"
 	vtrpcpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtrpc"
 )
 
@@ -169,17 +170,18 @@ func outer() error {
 
 func TestStackFormat(t *testing.T) {
 	err := outer()
-	got := fmt.Sprintf("%+v", err)
+	got := fmt.Sprintf("%v", err)
 
-	assertStringContains(t, got, "innerMost")
-	assertStringContains(t, got, "middle")
-	assertStringContains(t, got, "outer")
-}
+	assertContains(t, got, "innerMost", false)
+	assertContains(t, got, "middle", false)
+	assertContains(t, got, "outer", false)
 
-func assertStringContains(t *testing.T, s, substring string) {
-	if !strings.Contains(s, substring) {
-		t.Errorf("string did not contain `%v`: \n %v", substring, s)
-	}
+	LogErrStacks = true
+	defer func() { LogErrStacks = false }()
+	got = fmt.Sprintf("%v", err)
+	assertContains(t, got, "innerMost", true)
+	assertContains(t, got, "middle", true)
+	assertContains(t, got, "outer", true)
 }
 
 // errors.New, etc values are not expected to be compared by value
@@ -201,5 +203,88 @@ func TestErrorEquality(t *testing.T) {
 		for j := range vals {
 			_ = vals[i] == vals[j] // mustn't panic
 		}
+	}
+}
+
+func TestCreation(t *testing.T) {
+	testcases := []struct {
+		in, want vtrpcpb.Code
+	}{{
+		in:   vtrpcpb.Code_CANCELED,
+		want: vtrpcpb.Code_CANCELED,
+	}, {
+		in:   vtrpcpb.Code_UNKNOWN,
+		want: vtrpcpb.Code_UNKNOWN,
+	}}
+	for _, tcase := range testcases {
+		if got := Code(New(tcase.in, "")); got != tcase.want {
+			t.Errorf("Code(New(%v)): %v, want %v", tcase.in, got, tcase.want)
+		}
+		if got := Code(Errorf(tcase.in, "")); got != tcase.want {
+			t.Errorf("Code(Errorf(%v)): %v, want %v", tcase.in, got, tcase.want)
+		}
+	}
+}
+
+func TestCode(t *testing.T) {
+	testcases := []struct {
+		in   error
+		want vtrpcpb.Code
+	}{{
+		in:   nil,
+		want: vtrpcpb.Code_OK,
+	}, {
+		in:   errors.New("generic"),
+		want: vtrpcpb.Code_UNKNOWN,
+	}, {
+		in:   New(vtrpcpb.Code_CANCELED, "generic"),
+		want: vtrpcpb.Code_CANCELED,
+	}, {
+		in:   context.Canceled,
+		want: vtrpcpb.Code_CANCELED,
+	}, {
+		in:   context.DeadlineExceeded,
+		want: vtrpcpb.Code_DEADLINE_EXCEEDED,
+	}}
+	for _, tcase := range testcases {
+		if got := Code(tcase.in); got != tcase.want {
+			t.Errorf("Code(%v): %v, want %v", tcase.in, got, tcase.want)
+		}
+	}
+}
+
+func TestWrapping(t *testing.T) {
+	err1 := Errorf(vtrpcpb.Code_UNAVAILABLE, "foo")
+	err2 := Wrapf(err1, "bar")
+	err3 := Wrapf(err2, "baz")
+	errorWithoutStack := fmt.Sprintf("%v", err3)
+
+	LogErrStacks = true
+	errorWithStack := fmt.Sprintf("%v", err3)
+	LogErrStacks = false
+
+	assertEquals(t, err3.Error(), "baz: bar: foo")
+	assertContains(t, errorWithoutStack, "foo", true)
+	assertContains(t, errorWithoutStack, "bar", true)
+	assertContains(t, errorWithoutStack, "baz", true)
+	assertContains(t, errorWithoutStack, "TestWrapping", false)
+
+	assertContains(t, errorWithStack, "foo", true)
+	assertContains(t, errorWithStack, "bar", true)
+	assertContains(t, errorWithStack, "baz", true)
+	assertContains(t, errorWithStack, "TestWrapping", true)
+
+}
+
+func assertContains(t *testing.T, s, substring string, contains bool) {
+	t.Helper()
+	if doesContain := strings.Contains(s, substring); doesContain != contains {
+		t.Errorf("string `%v` contains `%v`: %v, want %v", s, substring, doesContain, contains)
+	}
+}
+
+func assertEquals(t *testing.T, a, b interface{}) {
+	if a != b {
+		t.Fatalf("expected [%s] to be equal to [%s]", a, b)
 	}
 }

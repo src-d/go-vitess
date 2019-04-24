@@ -578,7 +578,7 @@ func (f *FakeQueryService) ExecuteBatch(ctx context.Context, target *querypb.Tar
 		f.t.Errorf("invalid ExecuteBatch.ExecuteOptions: got %v expected %v", options, TestExecuteOptions)
 	}
 	f.checkTargetCallerID(ctx, "ExecuteBatch", target)
-	if asTransaction != TestAsTransaction {
+	if !asTransaction {
 		f.t.Errorf("invalid ExecuteBatch.AsTransaction: got %v expected %v", asTransaction, TestAsTransaction)
 	}
 	if transactionID != f.ExpectedTransactionID {
@@ -853,6 +853,11 @@ func (f *FakeQueryService) UpdateStream(ctx context.Context, target *querypb.Tar
 
 // VStream is part of the queryservice.QueryService interface
 func (f *FakeQueryService) VStream(ctx context.Context, target *querypb.Target, position string, filter *binlogdatapb.Filter, send func([]*binlogdatapb.VEvent) error) error {
+	panic("not implemented")
+}
+
+// VStreamRows is part of the QueryService interface.
+func (f *FakeQueryService) VStreamRows(ctx context.Context, target *querypb.Target, query string, lastpk *querypb.QueryResult, send func(*binlogdatapb.VStreamRowsResponse) error) error {
 	panic("not implemented")
 }
 

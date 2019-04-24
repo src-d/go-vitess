@@ -150,9 +150,7 @@ func TestMustSendDDL(t *testing.T) {
 
 func TestPlanbuilder(t *testing.T) {
 	t1 := &Table{
-		TableMap: &mysql.TableMap{
-			Name: "t1",
-		},
+		Name: "t1",
 		Columns: []schema.TableColumn{{
 			Name: sqlparser.NewColIdent("id"),
 			Type: sqltypes.Int64,
@@ -163,18 +161,14 @@ func TestPlanbuilder(t *testing.T) {
 	}
 	// t1alt has no id column
 	t1alt := &Table{
-		TableMap: &mysql.TableMap{
-			Name: "t1",
-		},
+		Name: "t1",
 		Columns: []schema.TableColumn{{
 			Name: sqlparser.NewColIdent("val"),
 			Type: sqltypes.VarBinary,
 		}},
 	}
 	t2 := &Table{
-		TableMap: &mysql.TableMap{
-			Name: "t2",
-		},
+		Name: "t2",
 		Columns: []schema.TableColumn{{
 			Name: sqlparser.NewColIdent("id"),
 			Type: sqltypes.Int64,
@@ -277,33 +271,18 @@ func TestPlanbuilder(t *testing.T) {
 		},
 	}, {
 		inTable: t1,
-		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, val, month(val) m, day(id), hour(val) from t1 where in_keyrange(m, 'hash', '-80')"},
+		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select val, id from t1 where in_keyrange('-80')"},
 		outPlan: &Plan{
 			ColExprs: []ColExpr{{
-				ColNum: 0,
-				Alias:  sqlparser.NewColIdent("id"),
-				Type:   sqltypes.Int64,
-			}, {
 				ColNum: 1,
 				Alias:  sqlparser.NewColIdent("val"),
 				Type:   sqltypes.VarBinary,
 			}, {
-				ColNum:    1,
-				Alias:     sqlparser.NewColIdent("m"),
-				Type:      sqltypes.VarBinary,
-				Operation: OpMonth,
-			}, {
-				ColNum:    0,
-				Alias:     sqlparser.NewColIdent("day(id)"),
-				Type:      sqltypes.VarBinary,
-				Operation: OpDay,
-			}, {
-				ColNum:    1,
-				Alias:     sqlparser.NewColIdent("hour(val)"),
-				Type:      sqltypes.VarBinary,
-				Operation: OpHour,
+				ColNum: 0,
+				Alias:  sqlparser.NewColIdent("id"),
+				Type:   sqltypes.Int64,
 			}},
-			VindexColumn: 2,
+			VindexColumn: 1,
 		},
 	}, {
 		inTable: t2,
@@ -335,47 +314,47 @@ func TestPlanbuilder(t *testing.T) {
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "delete from t1"},
-		outErr:  `unexpected: delete from t1`,
+		outErr:  `unsupported: delete from t1`,
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select * from t1, t2"},
-		outErr:  `unexpected: select * from t1, t2`,
+		outErr:  `unsupported: select * from t1, t2`,
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select * from t1 join t2"},
-		outErr:  `unexpected: select * from t1 join t2`,
+		outErr:  `unsupported: select * from t1 join t2`,
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select * from a.t1"},
-		outErr:  `unexpected: select * from a.t1`,
+		outErr:  `unsupported: select * from a.t1`,
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select * from t2"},
-		outErr:  `unexpected: select expression table t2 does not match the table entry name t1`,
+		outErr:  `unsupported: select expression table t2 does not match the table entry name t1`,
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select *, id from t1"},
-		outErr:  `unexpected: select *, id from t1`,
+		outErr:  `unsupported: *, id`,
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, val from t1 where id=1"},
-		outErr:  `unexpected where clause:  where id = 1`,
+		outErr:  `unsupported where clause:  where id = 1`,
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, val from t1 where max(id)"},
-		outErr:  `unexpected where clause:  where max(id)`,
+		outErr:  `unsupported where clause:  where max(id)`,
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, val from t1 where in_keyrange(id)"},
-		outErr:  `unexpected where clause:  where in_keyrange(id)`,
+		outErr:  `unsupported: id`,
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, val from t1 where in_keyrange(*, 'hash', '-80')"},
-		outErr:  `unexpected: in_keyrange(*, 'hash', '-80')`,
+		outErr:  `unexpected: *`,
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, val from t1 where in_keyrange(1, 'hash', '-80')"},
-		outErr:  `unsupported: in_keyrange(1, 'hash', '-80')`,
+		outErr:  `unexpected: 1`,
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, val from t1 where in_keyrange(none, 'hash', '-80')"},
@@ -391,35 +370,15 @@ func TestPlanbuilder(t *testing.T) {
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, val from t1 where in_keyrange(id, 'hash', '-80-')"},
-		outErr:  `unexpected where clause:  where in_keyrange(id, 'hash', '-80-')`,
+		outErr:  `unexpected in_keyrange parameter: '-80-'`,
 	}, {
 		// analyzeExpr tests.
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, * from t1"},
-		outErr:  `unexpected: *`,
+		outErr:  `unsupported: *`,
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select none from t1"},
-		outErr:  `column none not found in table t1`,
-	}, {
-		inTable: t1,
-		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, val, hour(distinct a) from t1"},
-		outErr:  `unsupported: hour(distinct a)`,
-	}, {
-		inTable: t1,
-		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, val, hour(a, b) from t1"},
-		outErr:  `unsupported: hour(a, b)`,
-	}, {
-		inTable: t1,
-		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, val, hour(*) from t1"},
-		outErr:  `unsupported: hour(*)`,
-	}, {
-		inTable: t1,
-		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, val, hour(val+1) from t1"},
-		outErr:  `unsupported: hour(val + 1)`,
-	}, {
-		inTable: t1,
-		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, val, hour(none) from t1"},
 		outErr:  `column none not found in table t1`,
 	}, {
 		inTable: t1,
@@ -428,16 +387,20 @@ func TestPlanbuilder(t *testing.T) {
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id+1, val from t1"},
-		outErr:  `unexpected: id + 1`,
+		outErr:  `unsupported: id + 1`,
+	}, {
+		inTable: t1,
+		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select t1.id, val from t1"},
+		outErr:  `unsupported qualifier for column: t1.id`,
 	}, {
 		// selString
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, val from t1 where in_keyrange(id, *, '-80')"},
-		outErr:  `unexpected: *`,
+		outErr:  `unsupported: *`,
 	}, {
 		inTable: t1,
 		inRule:  &binlogdatapb.Rule{Match: "t1", Filter: "select id, val from t1 where in_keyrange(id, 1+1, '-80')"},
-		outErr:  `unexpected: 1 + 1`,
+		outErr:  `unsupported: 1 + 1`,
 	}}
 
 	for _, tcase := range testcases {
@@ -451,6 +414,8 @@ func TestPlanbuilder(t *testing.T) {
 			if !reflect.DeepEqual(tcase.outPlan, plan) {
 				t.Errorf("Plan(%v, %v):\n%v, want\n%v", tcase.inTable, tcase.inRule, plan, tcase.outPlan)
 			}
+		} else if tcase.outPlan != nil {
+			t.Errorf("Plan(%v, %v):\nnil, want\n%v", tcase.inTable, tcase.inRule, tcase.outPlan)
 		}
 		gotErr := ""
 		if err != nil {
