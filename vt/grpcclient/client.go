@@ -26,12 +26,12 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
-	"vitess.io/vitess/go/trace"
+	"gopkg.in/src-d/go-vitess.v1/trace"
 
-	"vitess.io/vitess/go/vt/grpccommon"
-	"vitess.io/vitess/go/vt/vttls"
+	"gopkg.in/src-d/go-vitess.v1/vt/grpccommon"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttls"
 
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 var (

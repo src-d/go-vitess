@@ -19,9 +19,9 @@ package testsuite
 import (
 	"testing"
 
-	"vitess.io/vitess/go/vt/callerid"
-	querypb "vitess.io/vitess/go/vt/proto/query"
-	vtrpcpb "vitess.io/vitess/go/vt/proto/vtrpc"
+	"gopkg.in/src-d/go-vitess.v1/vt/callerid"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	vtrpcpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtrpc"
 )
 
 func TestFakeCallerID(t *testing.T) {

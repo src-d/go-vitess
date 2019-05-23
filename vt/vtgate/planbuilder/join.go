@@ -19,8 +19,8 @@ package planbuilder
 import (
 	"errors"
 
-	"vitess.io/vitess/go/vt/sqlparser"
-	"vitess.io/vitess/go/vt/vtgate/engine"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtgate/engine"
 )
 
 var _ builder = (*join)(nil)

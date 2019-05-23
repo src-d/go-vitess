@@ -26,7 +26,7 @@ import (
 	"fmt"
 	"time"
 
-	"vitess.io/vitess/go/mysql"
+	"gopkg.in/src-d/go-vitess.v1/mysql"
 
 	"golang.org/x/net/context"
 )

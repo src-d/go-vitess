@@ -22,7 +22,7 @@ import (
 	"os"
 	"testing"
 
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/vstreamer/testenv"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/vstreamer/testenv"
 )
 
 var (

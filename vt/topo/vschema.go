@@ -20,11 +20,11 @@ import (
 	"path"
 
 	"golang.org/x/net/context"
-	"vitess.io/vitess/go/vt/vterrors"
+	"gopkg.in/src-d/go-vitess.v1/vt/vterrors"
 
 	"github.com/golang/protobuf/proto"
-	vschemapb "vitess.io/vitess/go/vt/proto/vschema"
-	"vitess.io/vitess/go/vt/vtgate/vindexes"
+	vschemapb "gopkg.in/src-d/go-vitess.v1/vt/proto/vschema"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtgate/vindexes"
 )
 
 // SaveVSchema first validates the VSchema, then saves it.

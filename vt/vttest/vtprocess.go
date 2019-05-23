@@ -27,7 +27,7 @@ import (
 	"syscall"
 	"time"
 
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 
 	"github.com/golang/protobuf/proto"
 )

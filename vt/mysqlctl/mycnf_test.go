@@ -23,9 +23,9 @@ import (
 	"strings"
 	"testing"
 
-	"vitess.io/vitess/go/vt/dbconfigs"
-	"vitess.io/vitess/go/vt/env"
-	"vitess.io/vitess/go/vt/servenv"
+	"gopkg.in/src-d/go-vitess.v1/vt/dbconfigs"
+	"gopkg.in/src-d/go-vitess.v1/vt/env"
+	"gopkg.in/src-d/go-vitess.v1/vt/servenv"
 )
 
 var MycnfPath = "/tmp/my.cnf"

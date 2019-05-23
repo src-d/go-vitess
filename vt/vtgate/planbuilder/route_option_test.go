@@ -19,8 +19,8 @@ package planbuilder
 import (
 	"testing"
 
-	"vitess.io/vitess/go/vt/vtgate/engine"
-	"vitess.io/vitess/go/vt/vtgate/vindexes"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtgate/engine"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtgate/vindexes"
 )
 
 func TestIsBetterThan(t *testing.T) {

@@ -23,7 +23,7 @@ package mysqlctl
 import (
 	"fmt"
 
-	"vitess.io/vitess/go/vt/dbconfigs"
+	"gopkg.in/src-d/go-vitess.v1/vt/dbconfigs"
 )
 
 // CreateMysqldAndMycnf returns a Mysqld and a Mycnf object to use for working with a MySQL

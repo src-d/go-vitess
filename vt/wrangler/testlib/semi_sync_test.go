@@ -20,7 +20,7 @@ import (
 	"flag"
 	"testing"
 
-	"vitess.io/vitess/go/vt/topo/topoproto"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/topoproto"
 )
 
 func init() {

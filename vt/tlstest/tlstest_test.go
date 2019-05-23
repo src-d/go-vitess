@@ -29,7 +29,7 @@ import (
 	"testing"
 	"time"
 
-	"vitess.io/vitess/go/vt/vttls"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttls"
 )
 
 // TestClientServer generates:

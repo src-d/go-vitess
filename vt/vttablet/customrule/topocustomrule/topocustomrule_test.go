@@ -21,9 +21,9 @@ import (
 	"testing"
 	"time"
 
-	"vitess.io/vitess/go/vt/topo/memorytopo"
-	"vitess.io/vitess/go/vt/vttablet/tabletserver/rules"
-	"vitess.io/vitess/go/vt/vttablet/tabletservermock"
+	"gopkg.in/src-d/go-vitess.v1/vt/topo/memorytopo"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletserver/rules"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttablet/tabletservermock"
 )
 
 var customRule1 = `

@@ -20,8 +20,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"vitess.io/vitess/go/sqltypes"
-	binlogdatapb "vitess.io/vitess/go/vt/proto/binlogdata"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
+	binlogdatapb "gopkg.in/src-d/go-vitess.v1/vt/proto/binlogdata"
 )
 
 type TestReplicatorPlan struct {

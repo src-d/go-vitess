@@ -22,9 +22,9 @@ import (
 	"net/url"
 	"time"
 
-	"vitess.io/vitess/go/event"
-	"vitess.io/vitess/go/proc"
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/event"
+	"gopkg.in/src-d/go-vitess.v1/proc"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 var (

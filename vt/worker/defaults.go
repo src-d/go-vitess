@@ -16,7 +16,7 @@ limitations under the License.
 
 package worker
 
-import "vitess.io/vitess/go/vt/throttler"
+import "gopkg.in/src-d/go-vitess.v1/vt/throttler"
 
 const (
 	defaultOnline  = true

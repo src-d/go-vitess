@@ -23,10 +23,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"vitess.io/vitess/go/bytes2"
-	"vitess.io/vitess/go/hack"
+	"gopkg.in/src-d/go-vitess.v1/bytes2"
+	"gopkg.in/src-d/go-vitess.v1/hack"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
 )
 
 var (

@@ -22,7 +22,7 @@ import (
 	"strings"
 	"testing"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
 )
 
 const (

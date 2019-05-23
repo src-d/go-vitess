@@ -20,7 +20,7 @@ import (
 	"database/sql/driver"
 	"io"
 
-	"vitess.io/vitess/go/sqltypes"
+	"gopkg.in/src-d/go-vitess.v1/sqltypes"
 )
 
 // rows creates a database/sql/driver compliant Row iterator

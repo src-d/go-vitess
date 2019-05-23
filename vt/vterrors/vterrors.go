@@ -75,7 +75,7 @@ import (
 	"io"
 
 	"golang.org/x/net/context"
-	vtrpcpb "vitess.io/vitess/go/vt/proto/vtrpc"
+	vtrpcpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vtrpc"
 )
 
 // LogErrStacks controls whether or not printing errors includes the

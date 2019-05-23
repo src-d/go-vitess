@@ -34,8 +34,8 @@ import (
 
 	zookeeper "github.com/samuel/go-zookeeper/zk"
 
-	"vitess.io/vitess/go/vt/env"
-	"vitess.io/vitess/go/vt/log"
+	"gopkg.in/src-d/go-vitess.v1/vt/env"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 )
 
 const (

@@ -20,7 +20,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"vitess.io/vitess/go/cache"
+	"gopkg.in/src-d/go-vitess.v1/cache"
 )
 
 // Consolidator consolidates duplicate queries from executing simulaneously

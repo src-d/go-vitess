@@ -22,9 +22,9 @@ package vtaclcheck
 import (
 	"fmt"
 
-	"vitess.io/vitess/go/mysql"
-	"vitess.io/vitess/go/vt/tableacl"
-	"vitess.io/vitess/go/vt/tableacl/simpleacl"
+	"gopkg.in/src-d/go-vitess.v1/mysql"
+	"gopkg.in/src-d/go-vitess.v1/vt/tableacl"
+	"gopkg.in/src-d/go-vitess.v1/vt/tableacl/simpleacl"
 )
 
 // Options to control the explain process

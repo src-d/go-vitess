@@ -23,7 +23,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"vitess.io/vitess/go/vt/vtgate/vtgateconn"
+	"gopkg.in/src-d/go-vitess.v1/vt/vtgate/vtgateconn"
 )
 
 var (

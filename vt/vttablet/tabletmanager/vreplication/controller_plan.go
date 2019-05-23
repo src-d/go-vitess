@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"vitess.io/vitess/go/vt/sqlparser"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
 )
 
 // controllerPlan is the plan for vreplication control statements.

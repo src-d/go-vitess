@@ -26,12 +26,12 @@ import (
 	"strings"
 	"testing"
 
-	"vitess.io/vitess/go/mysql"
-	vtenv "vitess.io/vitess/go/vt/env"
-	"vitess.io/vitess/go/vt/tlstest"
-	"vitess.io/vitess/go/vt/vttest"
+	"gopkg.in/src-d/go-vitess.v1/mysql"
+	vtenv "gopkg.in/src-d/go-vitess.v1/vt/env"
+	"gopkg.in/src-d/go-vitess.v1/vt/tlstest"
+	"gopkg.in/src-d/go-vitess.v1/vt/vttest"
 
-	vttestpb "vitess.io/vitess/go/vt/proto/vttest"
+	vttestpb "gopkg.in/src-d/go-vitess.v1/vt/proto/vttest"
 )
 
 var (

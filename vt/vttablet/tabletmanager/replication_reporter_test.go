@@ -21,8 +21,8 @@ import (
 	"testing"
 	"time"
 
-	"vitess.io/vitess/go/vt/health"
-	"vitess.io/vitess/go/vt/mysqlctl/fakemysqldaemon"
+	"gopkg.in/src-d/go-vitess.v1/vt/health"
+	"gopkg.in/src-d/go-vitess.v1/vt/mysqlctl/fakemysqldaemon"
 )
 
 func TestBasicMySQLReplicationLag(t *testing.T) {

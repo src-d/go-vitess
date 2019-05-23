@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"testing"
 
-	querypb "vitess.io/vitess/go/vt/proto/query"
-	"vitess.io/vitess/go/vt/sqlparser"
+	querypb "gopkg.in/src-d/go-vitess.v1/vt/proto/query"
+	"gopkg.in/src-d/go-vitess.v1/vt/sqlparser"
 )
 
 func TestTableColumnString(t *testing.T) {

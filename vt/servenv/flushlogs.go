@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"vitess.io/vitess/go/vt/logutil"
+	"gopkg.in/src-d/go-vitess.v1/vt/logutil"
 )
 
 func init() {
