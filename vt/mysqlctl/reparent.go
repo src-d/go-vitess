@@ -27,6 +27,7 @@ import (
 	"time"
 
 	"gopkg.in/src-d/go-vitess.v1/mysql"
+	"gopkg.in/src-d/go-vitess.v1/vt/log"
 
 	"golang.org/x/net/context"
 )
@@ -84,6 +85,7 @@ func (mysqld *Mysqld) WaitForReparentJournal(ctx context.Context, timeCreatedNS 
 		t := time.After(100 * time.Millisecond)
 		select {
 		case <-ctx.Done():
+			log.Warning("WaitForReparentJournal failed to see row before timeout.")
 			return ctx.Err()
 		case <-t:
 		}
